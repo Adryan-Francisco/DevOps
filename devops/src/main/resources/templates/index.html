@@ -3,36 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevOps - Cursos</title>
+    <title>Bem-vindo ao Sistema de Gerenciamento de Alunos</title>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
     <header>
-        <h1>DevOps - Cursos</h1>
+        <h1 align="center">Bem-vindo ao Sistema de Gerenciamento de Alunos</h1>
     </header>
     <main>
-        <section>
-            <h2>Lista de Cursos</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nome do Curso</th>
-                        <th>Período</th>
-                        <th>Carga Horária</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Aqui serão listados os cursos dinamicamente -->
-                    <tr th:each="curso : ${cursos}">
-                        <td th:text="${curso.id}">1</td>
-                        <td th:text="${curso.nomeCurso}">Curso de DevOps</td>
-                        <td th:text="${curso.periodoCurso}">Manhã</td>
-                        <td th:text="${curso.cargahorariaCurso}">40 horas</td>
-                    </tr>
-                </tbody>
-            </table>
+        <section align="center">
+            <h2>Escolha uma opção:</h2>
+            <a href="/alunos" class="button">Gerenciar Alunos</a>
         </section>
     </main>
-</body>
+
 </html>

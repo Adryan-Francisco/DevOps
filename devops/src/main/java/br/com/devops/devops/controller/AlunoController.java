@@ -19,6 +19,11 @@ public class AlunoController {
     @Autowired
     private AlunoService alunoService;
 
+@GetMapping
+public String listarRaiz(Model model) {
+    model.addAttribute("alunos", alunoService.getAllAlunos());
+    return "aluno/listarAlunos"; // <-- corrigido
+}
     //Metodo para salvar aluno
     @PostMapping("/salvar")
     public String salvar(@ModelAttribute Aluno aluno) {
@@ -27,12 +32,19 @@ public class AlunoController {
     }  
 
     //Método para listar todos os alunos
-    @GetMapping ("/listar")
-    public String listar(Model model) {
-        model.addAttribute("alunos", alunoService.getAllAlunos());
-        return "listar-alunos";
+   @GetMapping("/listar")
+public String listar(Model model) {
+    model.addAttribute("alunos", alunoService.getAllAlunos());
+    return "aluno/listarAlunos"; // <-- corrigido
+    }
+    // Método para criar um novo aluno e abrir o formulário de cadastro
+    @GetMapping("/novo")
+    public String novoAluno(Model model) {
+        model.addAttribute("aluno", new Aluno());
+        return "aluno/formularioAluno";
     }
     
+    //Metodo para atualizar aluno
 
     
 

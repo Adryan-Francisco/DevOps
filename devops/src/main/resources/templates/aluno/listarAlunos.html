@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org"> 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Alunos</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header>
+        <h1 align="center">Lista de Alunos</h1>
+    </header>
+
+    <main>
+        <section>
+            <h2 align="center">Alunos Cadastrados</h2>
+
+            <h3 align="center">
+                <a th:href="@{/alunos/novo}">Cadastrar Novo Aluno</a>
+            </h3>
+
+            <table align="center" border="1" cellspacing="0" cellpadding="10">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>Telefone</th>
+                        <th>Endereço</th>
+                        <th>CPF</th>
+                        <th>RA</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr th:each="aluno : ${alunos}">
+                        <td th:text="${aluno.id}">1</td>
+                        <td th:text="${aluno.nome}">Nome</td>
+                        <td th:text="${aluno.email}">email@email.com</td>
+                        <td th:text="${aluno.telefone}">(00) 00000-0000</td>
+                        <td th:text="${aluno.endereco}">Endereço</td>
+                        <td th:text="${aluno.cpf}">000.000.000-00</td>
+                        <td th:text="${aluno.ra}">0000</td>
+                        <td>
+                            <a th:href="@{/alunos/editar/{id}(id=${aluno.id})}">Editar</a> |
+                            <a th:href="@{/alunos/excluir/{id}(id=${aluno.id})}"
+                               onclick="return confirm('Tem certeza que deseja excluir este aluno?');">
+                               Excluir
+                            </a>
+                        </td>
+                    </tr>
+
+                    <!-- Caso não tenha alunos -->
+                    <tr th:if="${#lists.isEmpty(alunos)}">
+                        <td colspan="8" align="center">Nenhum aluno cadastrado</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+</body>
+</html>
