@@ -4,60 +4,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Alunos</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/styles.css?v=3">
 </head>
-<body>
-    <header>
-        <h1 align="center">Lista de Alunos</h1>
-    </header>
+<body class="pagina-lista">
 
-    <main>
-        <section>
-            <h2 align="center">Alunos Cadastrados</h2>
+    <div class="container-lista">
+        <div class="card-lista">
 
-            <h3 align="center">
-                <a th:href="@{/alunos/novo}">Cadastrar Novo Aluno</a>
-            </h3>
+            <header class="topo-lista">
+                <h1>Lista de Alunos</h1>
+                <p>Visualize, edite e gerencie os alunos cadastrados no sistema.</p>
+                <a class="btn-novo-aluno" th:href="@{/alunos/novo}">+ Cadastrar Novo Aluno</a>
+            </header>
 
-            <table align="center" border="1" cellspacing="0" cellpadding="10">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nome</th>
-                        <th>Email</th>
-                        <th>Telefone</th>
-                        <th>Endereço</th>
-                        <th>CPF</th>
-                        <th>RA</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
+            <main>
+                <div class="tabela-responsiva">
+                    <table class="tabela-alunos">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Telefone</th>
+                                <th>Endereço</th>
+                                <th>CPF</th>
+                                <th>RA</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
 
-                <tbody>
-                    <tr th:each="aluno : ${alunos}">
-                        <td th:text="${aluno.id}">1</td>
-                        <td th:text="${aluno.nome}">Nome</td>
-                        <td th:text="${aluno.email}">email@email.com</td>
-                        <td th:text="${aluno.telefone}">(00) 00000-0000</td>
-                        <td th:text="${aluno.endereco}">Endereço</td>
-                        <td th:text="${aluno.cpf}">000.000.000-00</td>
-                        <td th:text="${aluno.ra}">0000</td>
-                        <td>
-                            <a th:href="@{/alunos/editar/{id}(id=${aluno.id})}">Editar</a> |
-                            <a th:href="@{/alunos/excluir/{id}(id=${aluno.id})}"
-                               onclick="return confirm('Tem certeza que deseja excluir este aluno?');">
-                               Excluir
-                            </a>
-                        </td>
-                    </tr>
+                        <tbody>
+                            <tr th:each="aluno : ${alunos}">
+                                <td th:text="${aluno.idAluno}">1</td>
+                                <td th:text="${aluno.nomeAluno}">Nome</td>
+                                <td th:text="${aluno.emailAluno}">email@email.com</td>
+                                <td th:text="${aluno.telefoneAluno}">(00) 00000-0000</td>
+                                <td th:text="${aluno.enderecoAluno}">Endereço</td>
+                                <td th:text="${aluno.cpfAluno}">000.000.000-00</td>
+                                <td th:text="${aluno.raAluno}">0000</td>
+                                <td class="acoes-tabela">
+                                    <a class="btn-acao btn-editar" th:href="@{/alunos/editar/{id}(id=${aluno.idAluno})}">Editar</a>
+                                    <a class="btn-acao btn-excluir"
+                                       th:href="@{/alunos/excluir/{id}(id=${aluno.idAluno})}"
+                                       onclick="return confirm('Tem certeza que deseja excluir este aluno?');">
+                                        Excluir
+                                    </a>
+                                </td>
+                            </tr>
 
-                    <!-- Caso não tenha alunos -->
-                    <tr th:if="${#lists.isEmpty(alunos)}">
-                        <td colspan="8" align="center">Nenhum aluno cadastrado</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-    </main>
+                            <tr th:if="${#lists.isEmpty(alunos)}">
+                                <td colspan="8" class="sem-registros">Nenhum aluno cadastrado</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+
+        </div>
+    </div>
+
 </body>
 </html>

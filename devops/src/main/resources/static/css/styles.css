@@ -1,0 +1,300 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body.pagina-formulario {
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(135deg, #dbeafe, #eff6ff);
+    min-height: 100vh;
+    color: #1f2937;
+}
+
+.container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 15px;
+}
+
+.card-formulario {
+    width: 100%;
+    max-width: 850px;
+    background-color: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+    padding: 35px;
+}
+
+.topo-formulario {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.topo-formulario h1 {
+    font-size: 2rem;
+    color: #0f172a;
+    margin-bottom: 10px;
+}
+
+.topo-formulario p {
+    color: #475569;
+    margin-bottom: 18px;
+}
+
+.link-voltar {
+    display: inline-block;
+    text-decoration: none;
+    color: #2563eb;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.link-voltar:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+}
+
+.campo-largo {
+    grid-column: 1 / -1;
+}
+
+.campo label {
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.campo input {
+    padding: 12px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+    background-color: #f8fafc;
+}
+
+.campo input:focus {
+    border-color: #2563eb;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+}
+
+.acoes {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.btn-salvar,
+.btn-cancelar {
+    padding: 12px 22px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.btn-salvar {
+    background-color: #2563eb;
+    color: white;
+}
+
+.btn-salvar:hover {
+    background-color: #1d4ed8;
+}
+
+.btn-cancelar {
+    background-color: #e2e8f0;
+    color: #1e293b;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-cancelar:hover {
+    background-color: #cbd5e1;
+}
+
+@media (max-width: 768px) {
+    .card-formulario {
+        padding: 25px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .acoes {
+        flex-direction: column;
+    }
+
+    .btn-salvar,
+    .btn-cancelar {
+        width: 100%;
+        text-align: center;
+    }
+}
+/* Página de listagem */
+body.pagina-lista {
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(135deg, #dbeafe, #eff6ff);
+    min-height: 100vh;
+    color: #1f2937;
+}
+
+.container-lista {
+    width: 100%;
+    min-height: 100vh;
+    padding: 30px 15px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.card-lista {
+    width: 100%;
+    max-width: 1200px;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+    padding: 30px;
+}
+
+.topo-lista {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.topo-lista h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #0f172a;
+}
+
+.topo-lista p {
+    color: #475569;
+    margin-bottom: 20px;
+}
+
+.btn-novo-aluno {
+    display: inline-block;
+    background-color: #2563eb;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: bold;
+    transition: 0.3s ease;
+}
+
+.btn-novo-aluno:hover {
+    background-color: #1d4ed8;
+}
+
+.tabela-responsiva {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.tabela-alunos {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    min-width: 900px;
+}
+
+.tabela-alunos thead {
+    background-color: #2563eb;
+    color: #ffffff;
+}
+
+.tabela-alunos th,
+.tabela-alunos td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.tabela-alunos tbody tr:nth-child(even) {
+    background-color: #f8fafc;
+}
+
+.tabela-alunos tbody tr:hover {
+    background-color: #e0f2fe;
+    transition: 0.3s;
+}
+
+.acoes-tabela {
+    white-space: nowrap;
+}
+
+.btn-acao {
+    display: inline-block;
+    padding: 8px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: bold;
+    margin-right: 6px;
+    transition: 0.3s ease;
+}
+
+.btn-editar {
+    background-color: #f59e0b;
+    color: white;
+}
+
+.btn-editar:hover {
+    background-color: #d97706;
+}
+
+.btn-excluir {
+    background-color: #ef4444;
+    color: white;
+}
+
+.btn-excluir:hover {
+    background-color: #dc2626;
+}
+
+.sem-registros {
+    text-align: center;
+    padding: 20px;
+    color: #64748b;
+    font-style: italic;
+}
+
+@media (max-width: 768px) {
+    .card-lista {
+        padding: 20px;
+    }
+
+    .topo-lista h1 {
+        font-size: 1.6rem;
+    }
+
+    .btn-novo-aluno {
+        width: 100%;
+        text-align: center;
+    }
+}

@@ -1,44 +1,44 @@
 package br.com.devops.devops.entity;
-import jakarta.annotation.Generated;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Setter
+@Table(name = "aluno")
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Aluno {
-  
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_aluno")
     private Integer idAluno;
 
-    @Column(nullable = false, length = 40)
+    @Column(name = "nome_aluno", nullable = false, length = 40)
     private String nomeAluno;
     
-    @Column(length = 100)
+    @Column(name = "email_aluno", length = 100)
     private String emailAluno;
     
-    @Column(nullable = false, length = 11)
+    @Column(name = "telefone_aluno", nullable = false, length = 15)
     private String telefoneAluno;
 
-    @Column(nullable = false, length = 50)
+    @Column(name = "endereco_aluno", nullable = false, length = 50)
     private String enderecoAluno;
 
-    @Column(nullable = false, length = 11)
+    @Column(name = "cpf_aluno", nullable = false, length = 14)
     private String cpfAluno;
 
-    @Column(nullable = false)
+    @Column(name = "ra_aluno", nullable = false, length = 20)
     private String raAluno;
-
-
 }
