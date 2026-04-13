@@ -6,62 +6,70 @@
     <title>Formulário de Aluno</title>
     <link rel="stylesheet" href="/css/styles.css?v=2">
 </head>
-<body class="pagina-formulario">
-
-    <div class="container">
-        <div class="card-formulario">
-
-            <header class="topo-formulario">
-                <h1>Formulário de Aluno</h1>
-                <p>Preencha os dados abaixo para cadastrar ou editar um aluno.</p>
-                <a class="link-voltar" th:href="@{/alunos}">← Voltar para a lista de alunos</a>
-            </header>
-
-            <main>
-                <form th:action="@{/alunos/salvar}" th:object="${aluno}" method="post" class="form-grid">
-
-                    <input type="hidden" th:field="*{idAluno}">
-
-                    <div class="campo">
-                        <label for="nomeAluno">Nome</label>
-                        <input type="text" id="nomeAluno" th:field="*{nomeAluno}" placeholder="Digite o nome completo" required>
-                    </div>
-
-                    <div class="campo">
-                        <label for="emailAluno">Email</label>
-                        <input type="email" id="emailAluno" th:field="*{emailAluno}" placeholder="exemplo@email.com" required>
-                    </div>
-
-                    <div class="campo">
-                        <label for="telefoneAluno">Telefone</label>
-                        <input type="text" id="telefoneAluno" th:field="*{telefoneAluno}" placeholder="(00) 00000-0000" required>
-                    </div>
-
-                    <div class="campo">
-                        <label for="cpfAluno">CPF</label>
-                        <input type="text" id="cpfAluno" th:field="*{cpfAluno}" placeholder="000.000.000-00" required>
-                    </div>
-
-                    <div class="campo campo-largo">
-                        <label for="enderecoAluno">Endereço</label>
-                        <input type="text" id="enderecoAluno" th:field="*{enderecoAluno}" placeholder="Rua, número, bairro" required>
-                    </div>
-
-                    <div class="campo">
-                        <label for="raAluno">RA</label>
-                        <input type="text" id="raAluno" th:field="*{raAluno}" placeholder="Digite o RA" required>
-                    </div>
-
-                    <div class="acoes campo-largo">
-                        <button type="submit" class="btn-salvar">Salvar</button>
-                        <a class="btn-cancelar" th:href="@{/alunos}">Cancelar</a>
-                    </div>
-
-                </form>
-            </main>
-
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="logo">📚 Sistema DevOps</div>
+            <ul class="nav-links">
+                <li><a href="/">Início</a></li>
+                <li><a href="/aluno/listar">Alunos</a></li>
+                <li><a href="/curso/listar">Cursos</a></li>
+                <li><a href="/professor/listar">Professores</a></li>
+                <li><a href="/disciplina/listar">Disciplinas</a></li>
+            </ul>
         </div>
+    </nav>
+
+    <div class="page-header">
+        <h1>Formulário de Aluno</h1>
+        <p>Preencha os dados abaixo para cadastrar ou editar um aluno</p>
     </div>
 
+    <div class="container">
+        <div class="form-container">
+            <h2 class="form-title">Cadastro / Edição de Aluno</h2>
+
+            <form th:action="@{/aluno/salvar}" th:object="${aluno}" method="post">
+
+                <input type="hidden" th:field="*{idAluno}">
+
+                <div class="form-group">
+                    <label for="nomeAluno">Nome Completo</label>
+                    <input type="text" id="nomeAluno" th:field="*{nomeAluno}" placeholder="Digite o nome completo" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="emailAluno">Email</label>
+                    <input type="email" id="emailAluno" th:field="*{emailAluno}" placeholder="exemplo@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="telefoneAluno">Telefone</label>
+                    <input type="text" id="telefoneAluno" th:field="*{telefoneAluno}" placeholder="(00) 9 0000-0000" data-mask="phone" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="cpfAluno">CPF</label>
+                    <input type="text" id="cpfAluno" th:field="*{cpfAluno}" placeholder="000.000.000-00" data-mask="cpf" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="enderecoAluno">Endereço</label>
+                    <input type="text" id="enderecoAluno" th:field="*{enderecoAluno}" placeholder="Rua, número, bairro" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="raAluno">RA (Registro Acadêmico)</label>
+                    <input type="text" id="raAluno" th:field="*{raAluno}" placeholder="Digite o RA" required>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success"> Salvar Aluno</button>
+                    <a href="/aluno/listar" class="btn btn-secondary">↩️ Voltar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="/js/mask.js"></script>
 </body>
 </html>

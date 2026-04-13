@@ -3,18 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bem-vindo ao Sistema de Gerenciamento de Alunos</title>
+    <title>Sistema DevOps - Início</title>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-    <header>
-        <h1 align="center">Bem-vindo ao Sistema de Gerenciamento de Alunos</h1>
-    </header>
-    <main>
-        <section align="center">
-            <h2>Escolha uma opção:</h2>
-            <a href="/alunos" class="button">Gerenciar Alunos</a>
-        </section>
-    </main>
+    <nav>
+        <div class="nav-container">
+            <div class="logo">Sistema DevOps</div>
+            <ul class="nav-links">
+                <li><a href="/">Início</a></li>
+                <li><a href="/aluno/listar">Alunos</a></li>
+                <li><a href="/curso/listar">Cursos</a></li>
+                <li><a href="/professor/listar">Professores</a></li>
+                <li><a href="/disciplina/listar">Disciplinas</a></li>
+            </ul>
+        </div>
+    </nav>
 
+    <div class="page-header">
+        <h1>Bem-vindo ao Sistema DevOps</h1>
+        <p>Gerenciamento de Alunos, Cursos, Professores e Disciplinas</p>
+    </div>
+
+    <div class="container">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; width: 100%;">
+            
+            <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07); text-align: center; transition: all 0.3s ease;" 
+                 onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)';"
+                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px rgba(0, 0, 0, 0.07)';">
+                <h2 style="color: var(--primary-color); margin-bottom: 1rem; font-size: 1.5rem;">👥 Alunos</h2>
+                <p style="color: var(--text-light); margin-bottom: 1.5rem;">Gerencie os registros de alunos</p>
+                <a href="/aluno/listar" class="btn btn-primary">Gerenciar Alunos</a>
+            </div>
+
+            <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07); text-align: center; transition: all 0.3s ease;" 
+                 onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)';"
+                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px rgba(0, 0, 0, 0.07)';">
+                <h2 style="color: var(--info-color); margin-bottom: 1rem; font-size: 1.5rem;">🎓 Cursos</h2>
+                <p style="color: var(--text-light); margin-bottom: 1.5rem;">Gerencie os cursos disponíveis</p>
+                <a href="/curso/listar" class="btn btn-info">Gerenciar Cursos</a>
+            </div>
+
+            <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07); text-align: center; transition: all 0.3s ease;" 
+                 onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)';"
+                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px rgba(0, 0, 0, 0.07)';">
+                <h2 style="color: var(--success-color); margin-bottom: 1rem; font-size: 1.5rem;">👨‍🏫 Professores</h2>
+                <p style="color: var(--text-light); margin-bottom: 1.5rem;">Gerencie os dados dos professores</p>
+                <a href="/professor/listar" class="btn btn-success">Gerenciar Professores</a>
+            </div>
+
+            <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07); text-align: center; transition: all 0.3s ease;" 
+                 onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)';"
+                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px rgba(0, 0, 0, 0.07)';">
+                <h2 style="color: var(--warning-color); margin-bottom: 1rem; font-size: 1.5rem;">📖 Disciplinas</h2>
+                <p style="color: var(--text-light); margin-bottom: 1.5rem;">Gerencie as disciplinas oferecidas</p>
+                <a href="/disciplina/listar" class="btn btn-warning" style="background: var(--warning-color);">Gerenciar Disciplinas</a>
+            </div>
+
+        </div>
+    </div>
+    <script src="/js/mask.js"></script>
+</body>
 </html>

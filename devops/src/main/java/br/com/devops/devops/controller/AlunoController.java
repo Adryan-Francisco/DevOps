@@ -13,19 +13,19 @@ import br.com.devops.devops.entity.Aluno;
 import br.com.devops.devops.service.AlunoService;
 
 @Controller
-@RequestMapping("/alunos")
+@RequestMapping("/aluno")
 public class AlunoController {
 
     @Autowired
     private AlunoService alunoService;
 
-    @GetMapping
+    @GetMapping("/listar")
     public String listar(Model model) {
         model.addAttribute("alunos", alunoService.getAllAlunos());
         return "aluno/listarAlunos";
     }
 
-    @GetMapping("/novo")
+    @GetMapping("/formulario")
     public String novoAluno(Model model) {
         model.addAttribute("aluno", new Aluno());
         return "aluno/formularioAluno";
@@ -34,7 +34,7 @@ public class AlunoController {
     @PostMapping("/salvar")
     public String salvar(@ModelAttribute Aluno aluno) {
         alunoService.saveAluno(aluno);
-        return "redirect:/alunos";
+        return "redirect:/aluno/listar";
     }
 
     @GetMapping("/editar/{id}")
@@ -44,9 +44,9 @@ public class AlunoController {
         return "aluno/formularioAluno";
     }
 
-    @GetMapping("/excluir/{id}")
-    public String excluir(@PathVariable Integer id) {
+    @GetMapping("/deletar/{id}")
+    public String deletar(@PathVariable Integer id) {
         alunoService.deleteAluno(id);
-        return "redirect:/alunos";
+        return "redirect:/aluno/listar";
     }
 }

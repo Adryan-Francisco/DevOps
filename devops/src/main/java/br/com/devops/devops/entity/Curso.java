@@ -27,5 +27,4 @@ public class Curso {
 
     @Column(nullable = false)
     private Integer cargahorariaCurso;
-
 }

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário Disciplina</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="logo">Sistema DevOps</div>
+            <ul class="nav-links">
+                <li><a href="/">Início</a></li>
+                <li><a href="/aluno/listar">Alunos</a></li>
+                <li><a href="/curso/listar">Cursos</a></li>
+                <li><a href="/professor/listar">Professores</a></li>
+                <li><a href="/disciplina/listar">Disciplinas</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <h1 th:if="${disciplina.idDisciplina == null}">Nova Disciplina</h1>
+        <h1 th:unless="${disciplina.idDisciplina == null}">Editar Disciplina</h1>
+        <p>Preencha os dados da disciplina</p>
+    </div>
+
+    <div class="container">
+        <div class="form-container">
+            <form th:if="${disciplina.idDisciplina == null}" th:action="@{/disciplina/salvar}" method="post">
+                <h2 class="form-title">Cadastro de Disciplina</h2>
+
+                <div class="form-group">
+                    <label for="nomeDisciplina">Nome da Disciplina:</label>
+                    <input type="text" id="nomeDisciplina" name="nomeDisciplina" th:value="${disciplina.nomeDisciplina}" placeholder="Digite o nome da disciplina" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="siglaDisciplina">Sigla:</label>
+                    <input type="text" id="siglaDisciplina" name="siglaDisciplina" th:value="${disciplina.siglaDisciplina}" placeholder="Ex: POO, BD" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="cargaHorariaDisciplina">Carga Horária:</label>
+                    <input type="text" id="cargaHorariaDisciplina" name="cargaHorariaDisciplina" th:value="${disciplina.cargaHorariaDisciplina}" placeholder="0000" data-mask="number" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="idProfessor">ID do Professor:</label>
+                    <input type="text" id="idProfessor" name="idProfessor" th:value="${disciplina.idProfessor}" placeholder="0000" data-mask="number" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="idCurso">ID do Curso:</label>
+                    <input type="text" id="idCurso" name="idCurso" th:value="${disciplina.idCurso}" placeholder="0000" data-mask="number" required>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">💾 Salvar</button>
+                    <a href="/disciplina/listar" class="btn btn-secondary">❌ Cancelar</a>
+                </div>
+            </form>
+
+            <form th:unless="${disciplina.idDisciplina == null}" th:action="@{/disciplina/atualizar/{id}(id=${disciplina.idDisciplina})}" method="post">
+                <h2 class="form-title">Editar Disciplina</h2>
+
+                <input type="hidden" name="idDisciplina" th:value="${disciplina.idDisciplina}">
+
+                <div class="form-group">
+                    <label for="nomeDisciplina">Nome da Disciplina:</label>
+                    <input type="text" id="nomeDisciplina" name="nomeDisciplina" th:value="${disciplina.nomeDisciplina}" placeholder="Digite o nome da disciplina" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="siglaDisciplina">Sigla:</label>
+                    <input type="text" id="siglaDisciplina" name="siglaDisciplina" th:value="${disciplina.siglaDisciplina}" placeholder="Ex: POO, BD" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="cargaHorariaDisciplina">Carga Horária:</label>
+                    <input type="text" id="cargaHorariaDisciplina" name="cargaHorariaDisciplina" th:value="${disciplina.cargaHorariaDisciplina}" placeholder="0000" data-mask="number" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="idProfessor">ID do Professor:</label>
+                    <input type="text" id="idProfessor" name="idProfessor" th:value="${disciplina.idProfessor}" placeholder="0000" data-mask="number" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="idCurso">ID do Curso:</label>
+                    <input type="text" id="idCurso" name="idCurso" th:value="${disciplina.idCurso}" placeholder="0000" data-mask="number" required>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">💾 Atualizar</button>
+                    <a href="/disciplina/listar" class="btn btn-secondary">❌ Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="/js/mask.js"></script>
+</body>
+</html>
