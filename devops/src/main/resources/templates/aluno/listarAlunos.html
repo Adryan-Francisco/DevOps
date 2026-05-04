@@ -29,7 +29,9 @@
         <div class="table-container">
             <div class="table-header">
                 <h2>Alunos Cadastrados</h2>
-                <a class="btn btn-primary" th:href="@{/aluno/formulario}">➕ Cadastrar Novo Aluno</a>
+                <a class="btn btn-primary" th:href="@{/aluno/formulario}">
+                    ➕ Cadastrar Novo Aluno
+                </a>
             </div>
 
             <div style="overflow-x: auto;">
@@ -43,6 +45,7 @@
                             <th>Endereço</th>
                             <th>CPF</th>
                             <th>RA</th>
+                            <th>Curso</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -56,15 +59,32 @@
                             <td th:text="${aluno.enderecoAluno}">Endereço</td>
                             <td th:text="${aluno.cpfAluno}">000.000.000-00</td>
                             <td th:text="${aluno.raAluno}">0000</td>
+
+                            <td th:text="${aluno.curso != null ? aluno.curso.nomeCurso : 'Sem curso'}">
+                                Curso
+                            </td>
+
                             <td>
                                 <div class="acoes">
-                                    <a class="btn btn-small btn-info" th:href="@{/aluno/editar/{id}(id=${aluno.idAluno})}">✏️ Editar</a>
-                                    <a class="btn btn-small btn-danger"
-                                       th:href="@{/aluno/deletar/{id}(id=${aluno.idAluno})}"
-                                       onclick="return confirm('Tem certeza que deseja excluir este aluno?');">
+                                    <a 
+                                        class="btn btn-small btn-info" 
+                                        th:href="@{/aluno/editar/{id}(id=${aluno.idAluno})}">
+                                        ✏️ Editar
+                                    </a>
+
+                                    <a 
+                                        class="btn btn-small btn-danger"
+                                        th:href="@{/aluno/deletar/{id}(id=${aluno.idAluno})}"
+                                        onclick="return confirm('Tem certeza que deseja excluir este aluno?');">
                                         🗑️ Excluir
                                     </a>
                                 </div>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(alunos)}">
+                            <td colspan="9" style="text-align: center;">
+                                Nenhum aluno cadastrado.
                             </td>
                         </tr>
                     </tbody>

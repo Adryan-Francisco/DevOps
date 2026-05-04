@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import br.com.devops.devops.entity.Aluno;
 import br.com.devops.devops.service.AlunoService;
+import br.com.devops.devops.service.CursoService;
 
 @Controller
 @RequestMapping("/aluno")
@@ -18,6 +19,9 @@ public class AlunoController {
 
     @Autowired
     private AlunoService alunoService;
+    
+    @Autowired
+    private CursoService cursoService;
 
     @GetMapping("/listar")
     public String listar(Model model) {
@@ -28,6 +32,7 @@ public class AlunoController {
     @GetMapping("/formulario")
     public String novoAluno(Model model) {
         model.addAttribute("aluno", new Aluno());
+        model.addAttribute("cursos", cursoService.listarTodos());
         return "aluno/formularioAluno";
     }
 
@@ -40,7 +45,10 @@ public class AlunoController {
     @GetMapping("/editar/{id}")
     public String editar(@PathVariable Integer id, Model model) {
         Aluno aluno = alunoService.getAlunoById(id);
+
         model.addAttribute("aluno", aluno);
+        model.addAttribute("cursos", cursoService.listarTodos());
+
         return "aluno/formularioAluno";
     }
 
