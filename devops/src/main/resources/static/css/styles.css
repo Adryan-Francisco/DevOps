@@ -242,6 +242,89 @@ nav a:hover {
     background: var(--light-bg);
 }
 
+.form-shell {
+    max-width: 980px;
+}
+
+.form-card {
+    background: white;
+    border-radius: 18px;
+    box-shadow: var(--shadow-lg);
+    padding: 2rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem 1.5rem;
+}
+
+.form-grid .form-group:nth-child(5),
+.form-grid .form-actions {
+    grid-column: 1 / -1;
+}
+
+.field-error {
+    display: block;
+    margin-top: 0.4rem;
+    color: var(--danger-color);
+    font-size: 0.875rem;
+}
+
+.form-group input.is-invalid,
+.form-group select.is-invalid {
+    border-color: var(--danger-color);
+    background: #fff5f5;
+}
+
+.acoes {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.table-container .tabela th,
+.table-container .tabela td {
+    padding: 1rem 1.25rem;
+}
+
+.table-container .tabela tbody tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+.table-container .tabela tbody tr:hover {
+    background: #eef2ff;
+}
+
+@media (max-width: 768px) {
+    nav .nav-container,
+    .table-header,
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    nav .nav-links {
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid .form-group:nth-child(5),
+    .form-grid .form-actions {
+        grid-column: auto;
+    }
+
+    .form-actions .btn {
+        max-width: none;
+        width: 100%;
+    }
+}
+
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
