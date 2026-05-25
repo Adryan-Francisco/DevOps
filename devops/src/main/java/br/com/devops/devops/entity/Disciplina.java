@@ -2,9 +2,12 @@ package br.com.devops.devops.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,8 +36,9 @@ public class Disciplina {
     @Column(name = "carga_horaria_disciplina", nullable = false)
     private Integer cargaHorariaDisciplina;
 
-    @Column(name = "id_professor", nullable = false)
-    private Integer idProfessor;
+    @ManyToOne
+    @JoinColumn(name = "id_professor", nullable = false, foreignKey = @ForeignKey(name = "fk_disciplina_professor"))
+    private Professor professor;
 
     @Column(name = "id_curso", nullable = false)
     private Integer idCurso;

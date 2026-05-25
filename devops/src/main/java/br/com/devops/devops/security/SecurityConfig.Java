@@ -25,12 +25,13 @@ public class SecurityConfig {
                                                 .requestMatchers(
                                                                 "/",
                                                                 "/login",
+                                                                "/recuperar-senha",
+                                                                "/redefinir-senha",
                                                                 "/home",
                                                                 "/devops/**",
                                                                 "/css/**",
                                                                 "/js/**",
-                                                                "/images/**",
-                                                                "/usuario/**")
+                                                                "/images/**")
                                                 .permitAll()
                                                 .anyRequest().authenticated())
                                 .formLogin(form -> form
@@ -39,7 +40,7 @@ public class SecurityConfig {
                                                 .usernameParameter("username")
                                                 .passwordParameter("password")
                                                 .defaultSuccessUrl("/home", true)
-                                                .failureUrl("/login?error=true")
+                                                .failureUrl("/login?error")
                                                 .permitAll())
                                 .logout(logout -> logout
                                                 .logoutUrl("/logout")

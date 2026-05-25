@@ -35,7 +35,7 @@ public class DisciplinaService {
                     disciplina.setNomeDisciplina(disciplinaAtualizada.getNomeDisciplina());
                     disciplina.setSiglaDisciplina(disciplinaAtualizada.getSiglaDisciplina());
                     disciplina.setCargaHorariaDisciplina(disciplinaAtualizada.getCargaHorariaDisciplina());
-                    disciplina.setIdProfessor(disciplinaAtualizada.getIdProfessor());
+                    disciplina.setProfessor(disciplinaAtualizada.getProfessor());
                     disciplina.setIdCurso(disciplinaAtualizada.getIdCurso());
                     return disciplinaRepository.save(disciplina);
                 })

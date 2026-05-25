@@ -18,6 +18,6 @@ public class PaginaController {
 
     @GetMapping("/")
     public String index() {
-        return "index";
+        return "redirect:/login";
     }
 }

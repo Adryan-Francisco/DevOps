@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redefinir Senha - Sistema DevOps</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="logo">Sistema DevOps</div>
+            <ul class="nav-links">
+                <li><a href="/home">Home</a></li>
+                <li><a href="/curso/listar">Cursos</a></li>
+                <li><a href="/aluno/listar">Alunos</a></li>
+                <li><a href="/professor/listar">Professores</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <h1>Redefinir Senha</h1>
+        <p>Digite sua nova senha abaixo</p>
+    </div>
+
+    <div class="container">
+        <div class="form-container" style="max-width: 520px; margin: 0 auto;">
+            <form th:action="@{/redefinir-senha}" method="post">
+                <h2 class="form-title">Nova Senha</h2>
+
+                <div class="alerta" th:if="${mensagemSucesso}" style="color: green; margin-bottom: 1rem;">
+                    <p>✅ <span th:text="${mensagemSucesso}"></span></p>
+                </div>
+
+                <div class="alerta" th:if="${mensagemErro}" style="color: red; margin-bottom: 1rem;">
+                    <p>❌ <span th:text="${mensagemErro}"></span></p>
+                </div>
+
+                <input type="hidden" name="token" th:value="${token}">
+
+                <div class="form-group">
+                    <label for="novaSenha">Nova Senha:</label>
+                    <input type="password" id="novaSenha" name="novaSenha" placeholder="Digite sua nova senha" required minlength="6">
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmaSenha">Confirmar Senha:</label>
+                    <input type="password" id="confirmaSenha" name="confirmaSenha" placeholder="Confirme sua nova senha" required minlength="6">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Redefinir Senha</button>
+                    <a href="/login" class="btn btn-secondary">Voltar para Login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

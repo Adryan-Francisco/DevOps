@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "usuario")
@@ -52,4 +53,10 @@ public class Usuario {
     @Size(max = 20, message = "A role deve ter no máximo 20 caracteres.")
     @Column(name = "role_usuario", nullable = false, length = 20)
     private String roleUsuario;
+
+    @Column(name = "token_reset_senha", length = 255)
+    private String tokenResetSenha;
+
+    @Column(name = "data_expiracao_token")
+    private LocalDateTime dataExpiracaoToken;
 }
