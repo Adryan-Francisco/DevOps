@@ -1,3 +1,6 @@
+package br.com.devops.devops.security;
+
+import br.com.devops.devops.entity.Usuario;
 import java.util.Collection;
 import java.util.List;
 
@@ -17,7 +20,7 @@ public class UserDetailsImpl implements UserDetails {
    
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(usuario.getRole()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + usuario.getRoleUsuario()));
     }
  
     @Override

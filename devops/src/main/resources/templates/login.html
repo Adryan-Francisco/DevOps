@@ -4,63 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Sistema DevOps</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
-<body>
-    <nav>
-        <div class="nav-container">
-            <div class="logo">Sistema DevOps</div>
-            <ul class="nav-links">
-                <li><a href="/home">Home</a></li>
-                <li><a href="/curso/listar">Cursos</a></li>
-                <li><a href="/aluno/listar">Alunos</a></li>
-                <li><a href="/professor/listar">Professores</a></li>
-            </ul>
-        </div>
-    </nav>
+<body class="auth-page">
+    <main class="auth-layout">
+        <section class="auth-panel">
+            <div class="auth-brand">
+                <span class="auth-badge">Sistema DevOps</span>
+                <h1>Acessar sistema</h1>
+                <p>Entre com seu usuario e senha para continuar.</p>
+            </div>
 
-    <div class="page-header">
-        <h1>Acessar Sistema</h1>
-        <p>Entre com seu login e senha para continuar</p>
-    </div>
-
-    <div class="container">
-        <div class="form-container" style="max-width: 520px; margin: 0 auto;">
-            <form th:action="@{/login}" method="post">
-                <h2 class="form-title">Login</h2>
-
-                <div class="alerta" th:if="${param.error}" style="color: red; margin-bottom: 1rem;">
-                    <p>❌ Login ou senha inválidos. Tente novamente.</p>
+            <form class="auth-form" th:action="@{/login}" method="post">
+                <div class="alerta alerta-erro" th:if="${param.error}">
+                    Login ou senha invalidos. Tente novamente.
                 </div>
 
-                <div class="alerta" th:if="${param.logout}" style="color: green; margin-bottom: 1rem;">
-                    <p>✅ Você saiu do sistema com sucesso.</p>
+                <div class="alerta alerta-sucesso" th:if="${param.logout}">
+                    Voce saiu do sistema com sucesso.
+                </div>
+
+                <div class="alerta alerta-sucesso" th:if="${mensagemSucesso}">
+                    <span th:text="${mensagemSucesso}"></span>
                 </div>
 
                 <div class="form-group">
-                    <label for="username">Login:</label>
-                    <input type="text" id="username" name="username" placeholder="Digite seu login" required autofocus>
+                    <label for="username">Usuario</label>
+                    <input type="text" id="username" name="username" placeholder="Digite seu usuario" required autofocus>
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Senha:</label>
+                    <label for="password">Senha</label>
                     <input type="password" id="password" name="password" placeholder="Digite sua senha" required>
                 </div>
 
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Entrar</button>
-                    <a href="/home" class="btn btn-secondary">Voltar</a>
-                </div>
+                <button type="submit" class="btn btn-primary btn-full">Entrar</button>
 
-                <div style="text-align: center; margin-top: 1.5rem;">
-                    <a href="/recuperar-senha" style="color: #0066cc; text-decoration: none; font-size: 0.9rem;">
-                        Esqueceu sua senha?
-                    </a>
+                <div class="auth-links">
+                    <a th:href="@{/recuperar-senha}">Esqueceu sua senha?</a>
                 </div>
             </form>
-
-                
-        </div>
-    </div>
+        </section>
+    </main>
 </body>
 </html>

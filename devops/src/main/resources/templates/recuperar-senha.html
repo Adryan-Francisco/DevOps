@@ -4,50 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recuperar Senha - Sistema DevOps</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
-<body>
-    <nav>
-        <div class="nav-container">
-            <div class="logo">Sistema DevOps</div>
-            <ul class="nav-links">
-                <li><a href="/home">Home</a></li>
-                <li><a href="/curso/listar">Cursos</a></li>
-                <li><a href="/aluno/listar">Alunos</a></li>
-                <li><a href="/professor/listar">Professores</a></li>
-            </ul>
-        </div>
-    </nav>
+<body class="auth-page">
+    <main class="auth-layout">
+        <section class="auth-panel">
+            <div class="auth-brand">
+                <span class="auth-badge">Sistema DevOps</span>
+                <h1>Recuperar senha</h1>
+                <p>Informe o email cadastrado para receber o link de redefinicao.</p>
+            </div>
 
-    <div class="page-header">
-        <h1>Recuperar Senha</h1>
-        <p>Digite seu email para receber um link de recuperação</p>
-    </div>
-
-    <div class="container">
-        <div class="form-container" style="max-width: 520px; margin: 0 auto;">
-            <form th:action="@{/recuperar-senha}" method="post">
-                <h2 class="form-title">Recuperação de Senha</h2>
-
-                <div class="alerta" th:if="${mensagemSucesso}" style="color: green; margin-bottom: 1rem;">
-                    <p>✅ <span th:text="${mensagemSucesso}"></span></p>
+            <form class="auth-form" th:action="@{/recuperar-senha}" method="post">
+                <div class="alerta alerta-sucesso" th:if="${mensagemSucesso}">
+                    <span th:text="${mensagemSucesso}"></span>
                 </div>
 
-                <div class="alerta" th:if="${mensagemErro}" style="color: red; margin-bottom: 1rem;">
-                    <p>❌ <span th:text="${mensagemErro}"></span></p>
+                <div class="alerta alerta-erro" th:if="${mensagemErro}">
+                    <span th:text="${mensagemErro}"></span>
                 </div>
 
                 <div class="form-group">
-                    <label for="email">Email:</label>
+                    <label for="email">Email</label>
                     <input type="email" id="email" name="email" placeholder="Digite seu email cadastrado" required autofocus>
                 </div>
 
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Enviar Link de Recuperação</button>
-                    <a href="/login" class="btn btn-secondary">Voltar para Login</a>
+                <button type="submit" class="btn btn-primary btn-full">Enviar link</button>
+
+                <div class="auth-links">
+                    <a th:href="@{/login}">Voltar para o login</a>
                 </div>
             </form>
-        </div>
-    </div>
+        </section>
+    </main>
 </body>
 </html>

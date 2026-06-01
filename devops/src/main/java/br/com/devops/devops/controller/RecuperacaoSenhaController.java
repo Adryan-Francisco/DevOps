@@ -31,11 +31,13 @@ public class RecuperacaoSenhaController {
     public String solicitarRecuperacao(@RequestParam String email, RedirectAttributes redirectAttributes) {
         try {
             recuperacaoSenhaService.solicitarRecuperacaoSenha(email);
-            redirectAttributes.addFlashAttribute("mensagemSucesso", 
-                "Se o email existir em nosso sistema, você receberá um link para redefinir sua senha.");
+            redirectAttributes.addFlashAttribute(
+                    "mensagemSucesso",
+                    "Se o email existir em nosso sistema, voce recebera um link para redefinir sua senha.");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("mensagemErro", 
-                "Erro ao processar solicitação. Tente novamente.");
+            redirectAttributes.addFlashAttribute(
+                    "mensagemErro",
+                    "Erro ao processar solicitacao. Tente novamente.");
         }
         return "redirect:/recuperar-senha";
     }
@@ -47,20 +49,21 @@ public class RecuperacaoSenhaController {
         if (usuarioOpt.isPresent()) {
             model.addAttribute("token", token);
             return "redefinir-senha";
-        } else {
-            model.addAttribute("mensagemErro", "Link inválido ou expirado.");
-            return "recuperar-senha";
         }
+
+        model.addAttribute("mensagemErro", "Link invalido ou expirado.");
+        return "recuperar-senha";
     }
 
     @PostMapping("/redefinir-senha")
-    public String redefinirSenha(@RequestParam String token, 
-                                 @RequestParam String novaSenha,
-                                 @RequestParam String confirmaSenha,
-                                 RedirectAttributes redirectAttributes) {
+    public String redefinirSenha(
+            @RequestParam String token,
+            @RequestParam String novaSenha,
+            @RequestParam String confirmaSenha,
+            RedirectAttributes redirectAttributes) {
         try {
             if (!novaSenha.equals(confirmaSenha)) {
-                redirectAttributes.addFlashAttribute("mensagemErro", "As senhas não correspondem.");
+                redirectAttributes.addFlashAttribute("mensagemErro", "As senhas nao correspondem.");
                 return "redirect:/redefinir-senha?token=" + token;
             }
 
@@ -71,7 +74,9 @@ public class RecuperacaoSenhaController {
 
             String senhaEncriptada = passwordEncoder.encode(novaSenha);
             recuperacaoSenhaService.redefinirSenha(token, senhaEncriptada);
-            redirectAttributes.addFlashAttribute("mensagemSucesso", "Senha redefinida com sucesso! Faça login com sua nova senha.");
+            redirectAttributes.addFlashAttribute(
+                    "mensagemSucesso",
+                    "Senha redefinida com sucesso! Faca login com sua nova senha.");
             return "redirect:/login";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("mensagemErro", "Erro ao redefinir senha. Link pode estar expirado.");
