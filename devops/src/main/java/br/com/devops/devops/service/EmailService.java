@@ -21,6 +21,12 @@ public class EmailService {
     public void enviarEmailRecuperacaoSenha(String email, String token, String nomeUsuario) {
         String linkReset = baseUrl + "/redefinir-senha?token=" + token;
 
+        if (remetente.isBlank()) {
+            System.err.println("Email nao configurado. Defina MAIL_USERNAME e MAIL_PASSWORD antes de iniciar a aplicacao.");
+            System.out.println("Link de recuperacao gerado para ambiente local: " + linkReset);
+            return;
+        }
+
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(email);
