@@ -21,6 +21,8 @@ import jakarta.validation.Valid;
 @RequestMapping("/usuario")
 public class UsuarioController {
 
+    private static final String[] ROLES = { "ADMIN", "ALUNO", "PROFESSOR", "SECRETARIA", "USER" };
+
     @Autowired
     private UsuarioService usuarioService;
 
@@ -33,15 +35,20 @@ public class UsuarioController {
     @GetMapping("/formulario")
     public String formulario(Model model) {
         model.addAttribute("usuario", new Usuario());
-        model.addAttribute("roles", new String[] { "ADMIN", "USER" });
+        model.addAttribute("roles", ROLES);
         return "usuario/formularioUsuario";
     }
 
     @PostMapping("/salvar")
     public String salvar(@Valid @ModelAttribute Usuario usuario, BindingResult bindingResult, Model model,
             RedirectAttributes redirectAttributes) {
+        if (usuario.getIdUsuario() == null
+                && (usuario.getSenhaUsuario() == null || usuario.getSenhaUsuario().isBlank())) {
+            bindingResult.rejectValue("senhaUsuario", "senhaUsuario.required", "A senha é obrigatória.");
+        }
+
         if (bindingResult.hasErrors()) {
-            model.addAttribute("roles", new String[] { "ADMIN", "USER" });
+            model.addAttribute("roles", ROLES);
             return "usuario/formularioUsuario";
         }
 
@@ -54,8 +61,10 @@ public class UsuarioController {
     public String editar(@PathVariable Integer id, Model model) {
         Optional<Usuario> usuario = usuarioService.buscarPorId(id);
         if (usuario.isPresent()) {
-            model.addAttribute("usuario", usuario.get());
-            model.addAttribute("roles", new String[] { "ADMIN", "ALUNO", "PROFESSOR" });
+            Usuario usuarioEditado = usuario.get();
+            usuarioEditado.setSenhaUsuario(null);
+            model.addAttribute("usuario", usuarioEditado);
+            model.addAttribute("roles", ROLES);
             return "usuario/formularioUsuario";
         }
         return "redirect:/usuario/listar";

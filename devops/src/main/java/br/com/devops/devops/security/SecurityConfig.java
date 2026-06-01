@@ -32,6 +32,9 @@ public class SecurityConfig {
                                                                 "/login",
                                                                 "/recuperar-senha",
                                                                 "/redefinir-senha",
+                                                                "/home",
+                                                                "/devops/**",
+                                                                "/error",
                                                                 "/css/**",
                                                                 "/js/**",
                                                                 "/images/**")
@@ -55,8 +58,7 @@ public class SecurityConfig {
 
         @Bean
         public DaoAuthenticationProvider authenticationProvider() {
-                DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-                provider.setUserDetailsService(usuarioDetailsService);
+                DaoAuthenticationProvider provider = new DaoAuthenticationProvider(usuarioDetailsService);
                 provider.setPasswordEncoder(passwordEncoder);
                 return provider;
         }
@@ -66,5 +68,4 @@ public class SecurityConfig {
                         throws Exception {
                 return config.getAuthenticationManager();
         }
-
 }

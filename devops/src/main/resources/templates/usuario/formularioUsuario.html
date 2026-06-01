@@ -50,7 +50,8 @@
 
 		<div class="form-group">
 			<label for="senhaUsuario">Senha</label>
-			<input type="password" id="senhaUsuario" th:field="*{senhaUsuario}" th:classappend="${#fields.hasErrors('senhaUsuario')} ? 'is-invalid' : ''" required>
+			<input type="password" id="senhaUsuario" th:field="*{senhaUsuario}" th:classappend="${#fields.hasErrors('senhaUsuario')} ? 'is-invalid' : ''" th:required="${usuario.idUsuario == null}">
+			<small th:if="${usuario.idUsuario != null}">Deixe em branco para manter a senha atual.</small>
 			<small class="field-error" th:if="${#fields.hasErrors('senhaUsuario')}" th:errors="*{senhaUsuario}"></small>
 		</div>
 

@@ -28,8 +28,25 @@ public class UsuarioService {
     }
 
     public Usuario salvar(Usuario usuario) {
-        usuario.setSenhaUsuario(passwordEncoder.encode(usuario.getSenhaUsuario()));
-        return usuarioRepository.save(usuario);
+        if (usuario.getIdUsuario() == null) {
+            usuario.setSenhaUsuario(passwordEncoder.encode(usuario.getSenhaUsuario()));
+            return usuarioRepository.save(usuario);
+        }
+
+        return usuarioRepository.findById(usuario.getIdUsuario())
+                .map(usuarioExistente -> {
+                    usuarioExistente.setNomeUsuario(usuario.getNomeUsuario());
+                    usuarioExistente.setEmailUsuario(usuario.getEmailUsuario());
+                    usuarioExistente.setLoginUsuario(usuario.getLoginUsuario());
+                    usuarioExistente.setRoleUsuario(usuario.getRoleUsuario());
+
+                    if (usuario.getSenhaUsuario() != null && !usuario.getSenhaUsuario().isBlank()) {
+                        usuarioExistente.setSenhaUsuario(passwordEncoder.encode(usuario.getSenhaUsuario()));
+                    }
+
+                    return usuarioRepository.save(usuarioExistente);
+                })
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
     }
 
     public void deletar(Integer id) {

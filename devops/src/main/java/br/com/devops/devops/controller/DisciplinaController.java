@@ -1,7 +1,9 @@
 package br.com.devops.devops.controller;
 
 import br.com.devops.devops.entity.Disciplina;
+import br.com.devops.devops.service.CursoService;
 import br.com.devops.devops.service.DisciplinaService;
+import br.com.devops.devops.service.ProfessorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +21,12 @@ public class DisciplinaController {
     @Autowired
     private DisciplinaService disciplinaService;
 
+    @Autowired
+    private ProfessorService professorService;
+
+    @Autowired
+    private CursoService cursoService;
+
     @GetMapping("/listar")
     public String listar(Model model) {
         model.addAttribute("disciplinas", disciplinaService.listarTodas());
@@ -28,6 +36,7 @@ public class DisciplinaController {
     @GetMapping("/formulario")
     public String formulario(Model model) {
         model.addAttribute("disciplina", new Disciplina());
+        adicionarOpcoesFormulario(model);
         return "disciplina/formularioDisciplina";
     }
 
@@ -43,6 +52,7 @@ public class DisciplinaController {
         Optional<Disciplina> disciplina = disciplinaService.buscarPorId(id);
         if (disciplina.isPresent()) {
             model.addAttribute("disciplina", disciplina.get());
+            adicionarOpcoesFormulario(model);
             return "disciplina/formularioDisciplina";
         }
         return "redirect:/disciplina/listar";
@@ -60,5 +70,10 @@ public class DisciplinaController {
         disciplinaService.deletar(id);
         redirectAttributes.addFlashAttribute("mensagem", "Disciplina deletada com sucesso!");
         return "redirect:/disciplina/listar";
+    }
+
+    private void adicionarOpcoesFormulario(Model model) {
+        model.addAttribute("professores", professorService.listarTodos());
+        model.addAttribute("cursos", cursoService.listarTodos());
     }
 }

@@ -1,6 +1,7 @@
 package br.com.devops.devops.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -11,14 +12,22 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
+    @Value("${spring.mail.username:}")
+    private String remetente;
+
+    @Value("${app.base-url:http://localhost:${server.port:8080}}")
+    private String baseUrl;
+
     public void enviarEmailRecuperacaoSenha(String email, String token, String nomeUsuario) {
-        String linkReset = "http://localhost:8080/redefinir-senha?token=" + token;
+        String linkReset = baseUrl + "/redefinir-senha?token=" + token;
 
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(email);
             message.setSubject("Recuperacao de Senha - Sistema DevOps");
-            message.setFrom("seu_email@gmail.com");
+            if (!remetente.isBlank()) {
+                message.setFrom(remetente);
+            }
 
             String corpo = "Ola " + nomeUsuario + ",\n\n"
                     + "Voce solicitou uma recuperacao de senha. Clique no link abaixo para redefinir sua senha:\n\n"
