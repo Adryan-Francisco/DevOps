@@ -32,13 +32,15 @@ public class ProdutoController {
         return "produto/formularioProduto";
     }
 
+    //Salva o cadastro do produto
     @PostMapping("/salvar")
     public String salvar(Produto produto, RedirectAttributes redirectAttributes) {
         produtoService.salvar(produto);
         redirectAttributes.addFlashAttribute("mensagem", "Produto salvo com sucesso!");
         return "redirect:/produto/listar";
     }
-
+    
+    //Busca um produto para ser editado por ID
     @GetMapping("/editar/{id}")
     public String editar(@PathVariable Integer id, Model model, RedirectAttributes redirectAttributes) {
         return produtoService.buscarPorId(id).map(produto -> {
@@ -49,7 +51,7 @@ public class ProdutoController {
             return "redirect:/produto/listar";
         });
     }
-
+    //Atualiza um produto por ID
     @PostMapping("/atualizar/{id}")
     public String atualizar(@PathVariable Integer id, Produto produto, RedirectAttributes redirectAttributes) {
         produtoService.atualizar(id, produto);
@@ -57,6 +59,7 @@ public class ProdutoController {
         return "redirect:/produto/listar";
     }
 
+    //Metodo para excluir um produto por ID
     @GetMapping("/deletar/{id}")
     public String deletar(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         produtoService.deletar(id);

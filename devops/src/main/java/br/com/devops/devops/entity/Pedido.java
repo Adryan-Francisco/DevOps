@@ -6,10 +6,14 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
 
 @Entity
 @Table(name = "pedido")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor 
+@AllArgsConstructor
 public class Pedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +32,7 @@ public class Pedido {
     private BigDecimal valorTotal;
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemDoPedido> itens = new ArrayList<>();
+    private List<ItemDoPedido> itenList= new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "idALuno")
