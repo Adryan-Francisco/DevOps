@@ -495,6 +495,35 @@ nav a:hover {
     flex-wrap: wrap;
 }
 
+.produto-foto,
+.foto-atual img {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.foto-atual {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.quantidade-form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.quantidade-input {
+    width: 72px;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+}
+
 .btn-acoes {
     padding: 0.5rem 1rem;
     border-radius: 6px;

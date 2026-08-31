@@ -64,13 +64,20 @@
                         <tr th:each="item : ${itens}">
                             <td th:text="${item.idItemDoPedido}"></td>
                             <td th:text="${item.produto.nomeProduto}"></td>
-                            <td th:text="${item.quantidade}"></td>
+                            <td>
+                                <form class="quantidade-form"
+                                    th:action="@{/item-pedido/atualizar/{id}(id=${item.idItemDoPedido})}"
+                                    method="post">
+                                    <input type="hidden" name="produtoId" th:value="${item.produto.idProduto}">
+                                    <input class="quantidade-input" name="quantidade" type="number" min="1"
+                                        th:value="${item.quantidade}" required>
+                                    <button class="btn btn-small btn-info" type="submit">Atualizar</button>
+                                </form>
+                            </td>
                             <td th:text="${#numbers.formatCurrency(item.precoUnitario)}"></td>
                             <td th:text="${#numbers.formatCurrency(item.subtotal)}"></td>
                             <td>
-                                <div class="acoes"><a class="btn btn-small btn-info"
-                                        th:href="@{/item-pedido/editar/{id}(id=${item.idItemDoPedido})}">Editar</a><a
-                                        class="btn btn-small btn-danger"
+                                <div class="acoes"><a class="btn btn-small btn-danger"
                                         th:href="@{/item-pedido/deletar/{id}/{pedidoId}(id=${item.idItemDoPedido},pedidoId=${pedido.idPedido})}"
                                         onclick="return confirm('Remover este item?')">Remover</a></div>
                             </td>

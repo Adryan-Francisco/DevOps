@@ -35,6 +35,7 @@
                     <thead>
                         <tr>
                             <th>ID</th>
+                            <th>Foto</th>
                             <th>Nome</th>
                             <th>Descrição</th>
                             <th>Preço</th>
@@ -45,6 +46,12 @@
                     <tbody>
                         <tr th:each="produto : ${produtos}">
                             <td th:text="${produto.idProduto}"></td>
+                            <td>
+                                <img th:if="${produto.foto != null}" class="produto-foto"
+                                    th:src="@{/produto/foto/{id}(id=${produto.idProduto})}"
+                                    th:alt="${'Foto de ' + produto.nomeProduto}">
+                                <span th:unless="${produto.foto != null}">Sem foto</span>
+                            </td>
                             <td th:text="${produto.nomeProduto}"></td>
                             <td th:text="${produto.descricaoProduto}"></td>
                             <td th:text="${#numbers.formatCurrency(produto.precoProduto)}"></td>
@@ -58,7 +65,7 @@
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(produtos)}">
-                            <td colspan="6">Nenhum produto cadastrado.</td>
+                            <td colspan="7">Nenhum produto cadastrado.</td>
                         </tr>
                     </tbody>
                 </table>

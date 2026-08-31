@@ -24,10 +24,11 @@
         <p>Preencha os dados do produto</p>
     </div>
     <div class="container">
+        <div class="alerta" th:if="${erro}" th:text="${erro}"></div>
         <div class="form-container">
             <form
                 th:action="${produto.idProduto == null} ? @{/produto/salvar} : @{/produto/atualizar/{id}(id=${produto.idProduto})}"
-                method="post">
+                method="post" enctype="multipart/form-data">
                 <div class="form-group"><label for="nomeProduto">Nome:</label><input id="nomeProduto" name="nomeProduto"
                         type="text" th:value="${produto.nomeProduto}" maxlength="100" required></div>
                 <div class="form-group"><label for="descricaoProduto">Descrição:</label><textarea id="descricaoProduto"
@@ -39,6 +40,18 @@
                 <div class="form-group"><label for="quantidadeEstoque">Quantidade em estoque:</label><input
                         id="quantidadeEstoque" name="quantidadeEstoque" type="number" min="0"
                         th:value="${produto.quantidadeEstoque}" required></div>
+                <div class="form-group">
+                    <label for="fotoArquivo">Foto:</label>
+                    <input id="fotoArquivo" name="fotoArquivo" type="file"
+                        accept="image/jpeg,image/png,image/gif,image/webp">
+                    <small>Formatos permitidos: JPG, PNG, GIF ou WEBP. Tamanho máximo: 5 MB.</small>
+                    <div th:if="${produto.foto != null}" class="foto-atual">
+                        <span>Foto atual:</span>
+                        <img th:src="@{/produto/foto/{id}(id=${produto.idProduto})}"
+                            th:alt="${'Foto de ' + produto.nomeProduto}">
+                        <small th:text="${produto.tipoFoto}"></small>
+                    </div>
+                </div>
                 <div class="form-actions"><button class="btn btn-success" type="submit"
                         th:text="${produto.idProduto == null ? 'Salvar' : 'Atualizar'}"></button><a
                         class="btn btn-secondary" href="/produto/listar">Cancelar</a></div>

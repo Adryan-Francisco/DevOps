@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,4 +35,11 @@ public class Produto {
 
     @Column(nullable = false)
     private Integer quantidadeEstoque;
+
+    @Lob
+    @Column(name = "foto")
+    private byte[] foto;
+
+    @Column(name = "tipo_foto", length = 50)
+    private String tipoFoto;
 }
