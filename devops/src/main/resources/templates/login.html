@@ -1,50 +1,43 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Sistema DevOps</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
-</head>
+<head th:replace="~{fragments/layout :: head('Entrar')}"></head>
 <body class="auth-page">
-    <main class="auth-layout">
-        <section class="auth-panel">
-            <div class="auth-brand">
-                <span class="auth-badge">Sistema DevOps</span>
-                <h1>Acessar sistema</h1>
-                <p>Entre com seu usuario e senha para continuar.</p>
+<main class="auth-layout">
+    <section class="auth-panel">
+        <div class="auth-brand">
+            <div class="brand"><span class="brand-mark">D</span> Sistema DevOps</div>
+            <h1>Acessar o sistema</h1>
+            <p>Entre com seu usuário e senha para continuar.</p>
+        </div>
+
+        <form class="auth-form" th:action="@{/login}" method="post">
+            <div class="alert alert-error" role="alert" th:if="${param.error}">
+                Login ou senha inválidos. Tente novamente.
+            </div>
+            <div class="alert alert-success" role="status" th:if="${param.logout}">
+                Você saiu do sistema com segurança.
+            </div>
+            <div class="alert alert-success" role="status" th:if="${mensagemSucesso}" th:text="${mensagemSucesso}"></div>
+
+            <div class="form-group">
+                <label for="username">Usuário</label>
+                <input class="form-control" type="text" id="username" name="username"
+                       placeholder="Digite seu usuário" autocomplete="username" required autofocus>
             </div>
 
-            <form class="auth-form" th:action="@{/login}" method="post">
-                <div class="alerta alerta-erro" th:if="${param.error}">
-                    Login ou senha invalidos. Tente novamente.
-                </div>
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input class="form-control" type="password" id="password" name="password"
+                       placeholder="Digite sua senha" autocomplete="current-password" required>
+            </div>
 
-                <div class="alerta alerta-sucesso" th:if="${param.logout}">
-                    Voce saiu do sistema com sucesso.
-                </div>
+            <button type="submit" class="btn btn-primary btn-block">Entrar</button>
 
-                <div class="alerta alerta-sucesso" th:if="${mensagemSucesso}">
-                    <span th:text="${mensagemSucesso}"></span>
-                </div>
-
-                <div class="form-group">
-                    <label for="username">Usuario</label>
-                    <input type="text" id="username" name="username" placeholder="Digite seu usuario" required autofocus>
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Senha</label>
-                    <input type="password" id="password" name="password" placeholder="Digite sua senha" required>
-                </div>
-
-                <button type="submit" class="btn btn-primary btn-full">Entrar</button>
-
-                <div class="auth-links">
-                    <a th:href="@{/recuperar-senha}">Esqueceu sua senha?</a>
-                </div>
-            </form>
-        </section>
-    </main>
+            <div class="auth-links">
+                <a th:href="@{/recuperar-senha}">Esqueceu sua senha?</a>
+            </div>
+        </form>
+    </section>
+</main>
 </body>
 </html>

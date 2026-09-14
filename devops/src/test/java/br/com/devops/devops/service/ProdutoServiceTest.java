@@ -1,6 +1,7 @@
 package br.com.devops.devops.service;
 
 import br.com.devops.devops.entity.Produto;
+import br.com.devops.devops.repository.ItemDoPedidoRepository;
 import br.com.devops.devops.repository.ProdutoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,7 @@ class ProdutoServiceTest {
     @BeforeEach
     void setUp() {
         produtoRepository = mock(ProdutoRepository.class);
-        produtoService = new ProdutoService(produtoRepository);
+        produtoService = new ProdutoService(produtoRepository, mock(ItemDoPedidoRepository.class));
     }
 
     @Test

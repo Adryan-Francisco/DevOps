@@ -2,6 +2,7 @@ package br.com.devops.devops.service;
 
 import br.com.devops.devops.entity.Aluno;
 import br.com.devops.devops.entity.Pedido;
+import br.com.devops.devops.entity.StatusPedido;
 import br.com.devops.devops.repository.AlunoRepository;
 import br.com.devops.devops.repository.PedidoRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,6 +45,7 @@ class PedidoServiceTest {
 
         assertSame(aluno, salvo.getAluno());
         assertEquals("Maria", salvo.getNomeCliente());
+        assertEquals(StatusPedido.PENDENTE, salvo.getStatus());
         verify(pedidoRepository).save(pedido);
     }
 

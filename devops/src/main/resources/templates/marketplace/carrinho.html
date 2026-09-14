@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Carrinho')}"></head>
+<body class="marketplace-page">
+<header th:replace="~{fragments/layout :: storeHeader('carrinho')}"></header>
+
+<main class="store-main">
+    <div class="cart-page-head">
+        <div>
+            <span class="eyebrow">Sua seleção</span>
+            <h1>Carrinho de compras</h1>
+            <p>Confira os produtos e ajuste as quantidades antes de continuar.</p>
+        </div>
+        <a class="btn btn-secondary" th:href="@{/loja}">Continuar comprando</a>
+    </div>
+
+    <th:block th:replace="~{fragments/layout :: alertas}"></th:block>
+
+    <section class="store-empty" th:if="${#lists.isEmpty(itensCarrinho)}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="9" cy="20" r="1"/><circle cx="19" cy="20" r="1"/><path d="M3 4h2l2.4 10.2a2 2 0 0 0 2 1.5h7.9a2 2 0 0 0 2-1.6L21 7H6"/></svg>
+        <h2>Seu carrinho está vazio</h2>
+        <p>Explore os produtos disponíveis e adicione os seus favoritos.</p>
+        <a class="btn btn-primary" th:href="@{/loja}">Explorar produtos</a>
+    </section>
+
+    <div class="cart-layout" th:unless="${#lists.isEmpty(itensCarrinho)}">
+        <section class="cart-items" aria-label="Produtos no carrinho">
+            <article class="cart-item" th:each="item : ${itensCarrinho}">
+                <div class="cart-item-media">
+                    <img th:if="${item.produto.foto != null}" th:src="@{/produto/foto/{id}(id=${item.produto.idProduto})}"
+                         th:alt="${'Foto de ' + item.produto.nomeProduto}">
+                    <div class="product-placeholder" th:unless="${item.produto.foto != null}" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m21 8-9-5-9 5 9 5z"/><path d="m3 8 9 5 9-5v8l-9 5-9-5z"/></svg>
+                    </div>
+                </div>
+                <div class="cart-item-info">
+                    <h2 th:text="${item.produto.nomeProduto}">Produto</h2>
+                    <p th:text="${#numbers.formatCurrency(item.produto.precoProduto) + ' por unidade'}">R$ 0,00 por unidade</p>
+                    <span th:text="${item.produto.quantidadeEstoque + ' disponíveis'}">10 disponíveis</span>
+                </div>
+                <form class="cart-quantity" th:action="@{/carrinho/atualizar/{id}(id=${item.produto.idProduto})}" method="post">
+                    <label th:for="${'quantidade-' + item.produto.idProduto}">Quantidade</label>
+                    <div>
+                        <input class="form-control" type="number" name="quantidade"
+                               th:id="${'quantidade-' + item.produto.idProduto}" th:value="${item.quantidade}"
+                               min="1" th:max="${item.produto.quantidadeEstoque}" required>
+                        <button class="btn btn-secondary btn-sm" type="submit">Atualizar</button>
+                    </div>
+                </form>
+                <div class="cart-item-total">
+                    <span>Subtotal</span>
+                    <strong th:text="${#numbers.formatCurrency(item.subtotal)}">R$ 0,00</strong>
+                    <form th:action="@{/carrinho/remover/{id}(id=${item.produto.idProduto})}" method="post">
+                        <button class="remove-link" type="submit">Remover</button>
+                    </form>
+                </div>
+            </article>
+        </section>
+
+        <aside class="order-summary">
+            <h2>Resumo</h2>
+            <div class="summary-line">
+                <span th:text="${quantidadeCarrinho + (quantidadeCarrinho == 1 ? ' item' : ' itens')}">0 itens</span>
+                <span th:text="${#numbers.formatCurrency(totalCarrinho)}">R$ 0,00</span>
+            </div>
+            <div class="summary-total">
+                <span>Total</span>
+                <strong th:text="${#numbers.formatCurrency(totalCarrinho)}">R$ 0,00</strong>
+            </div>
+            <p>O estoque será confirmado quando o pedido for finalizado.</p>
+            <form th:action="@{/carrinho/limpar}" method="post" data-confirm="Deseja remover todos os produtos do carrinho?">
+                <button class="btn btn-ghost-danger btn-block" type="submit">Esvaziar carrinho</button>
+            </form>
+        </aside>
+    </div>
+</main>
+</body>
+</html>

@@ -1,84 +1,61 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulário Curso</title>
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
+<head th:replace="~{fragments/layout :: head(${curso.idCurso == null ? 'Novo curso' : 'Editar curso'})}"></head>
 <body>
-    <nav>
-        <div class="nav-container">
-            <div class="logo">📚 Sistema DevOps</div>
-            <ul class="nav-links">
-                <li><a href="/">Início</a></li>
-                <li><a href="/aluno/listar">Alunos</a></li>
-                <li><a href="/curso/listar">Cursos</a></li>
-                <li><a href="/professor/listar">Professores</a></li>
-                <li><a href="/disciplina/listar">Disciplinas</a></li>
-            </ul>
-        </div>
-    </nav>
+<div class="app">
+    <aside th:replace="~{fragments/layout :: sidebar('cursos')}"></aside>
 
-    <div class="page-header">
-        <h1 th:if="${curso.idCurso == null}">Novo Curso</h1>
-        <h1 th:unless="${curso.idCurso == null}">Editar Curso</h1>
-        <p>Preencha os dados do curso</p>
-    </div>
+    <main class="main">
+        <div class="content">
+            <div class="page-head">
+                <div>
+                    <div class="breadcrumb"><a th:href="@{/curso/listar}">Cursos</a><span>/</span></div>
+                    <h1 th:text="${curso.idCurso == null ? 'Novo curso' : 'Editar curso'}">Novo curso</h1>
+                    <p>Campos marcados com * são obrigatórios.</p>
+                </div>
+            </div>
 
-    <div class="container">
-        <div class="form-container">
-            <form th:if="${curso.idCurso == null}" th:action="@{/curso/salvar}" method="post">
-                <h2 class="form-title">Cadastro de Curso</h2>
+            <th:block th:replace="~{fragments/layout :: alertas}"></th:block>
 
-                <div class="form-group">
-                    <label for="nomeCurso">Nome do Curso:</label>
-                    <input type="text" id="nomeCurso" name="nomeCurso" th:value="${curso.nomeCurso}" placeholder="Digite o nome do curso" required>
+            <form class="card form-card" th:object="${curso}" method="post" novalidate
+                  th:action="${curso.idCurso == null} ? @{/curso/salvar} : @{/curso/atualizar/{id}(id=${curso.idCurso})}">
+                <div class="card-body form-grid">
+                    <div class="form-group full">
+                        <label class="required" for="nomeCurso">Nome do curso</label>
+                        <input class="form-control" type="text" th:field="*{nomeCurso}" th:errorclass="is-invalid"
+                               maxlength="40" placeholder="Ex: Desenvolvimento de Software" required>
+                        <small class="field-error" th:errors="*{nomeCurso}"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required" for="periodoCurso">Período</label>
+                        <input class="form-control" type="text" th:field="*{periodoCurso}" th:errorclass="is-invalid"
+                               maxlength="40" list="periodos" placeholder="Selecione ou digite" required>
+                        <datalist id="periodos">
+                            <option value="Matutino"></option>
+                            <option value="Vespertino"></option>
+                            <option value="Noturno"></option>
+                            <option value="Integral"></option>
+                            <option value="EAD"></option>
+                        </datalist>
+                        <small class="field-error" th:errors="*{periodoCurso}"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required" for="cargahorariaCurso">Carga horária total (horas)</label>
+                        <input class="form-control" type="number" min="1" th:field="*{cargahorariaCurso}"
+                               th:errorclass="is-invalid" placeholder="Ex: 2400" required>
+                        <small class="field-error" th:errors="*{cargahorariaCurso}"></small>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="periodoCurso">Período:</label>
-                    <input type="text" id="periodoCurso" name="periodoCurso" th:value="${curso.periodoCurso}" placeholder="Ex: Noturno, Matutino" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="cargahorariaCurso">Carga Horária Total:</label>
-                    <input type="text" id="cargahorariaCurso" name="cargahorariaCurso" th:value="${curso.cargahorariaCurso}" placeholder="0000" data-mask="number" required>
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-success">💾 Salvar</button>
-                    <a href="/curso/listar" class="btn btn-secondary">❌ Cancelar</a>
-                </div>
-            </form>
-
-            <form th:unless="${curso.idCurso == null}" th:action="@{/curso/atualizar/{id}(id=${curso.idCurso})}" method="post">
-                <h2 class="form-title">Editar Curso</h2>
-
-                <input type="hidden" name="idCurso" th:value="${curso.idCurso}">
-
-                <div class="form-group">
-                    <label for="nomeCurso">Nome do Curso:</label>
-                    <input type="text" id="nomeCurso" name="nomeCurso" th:value="${curso.nomeCurso}" placeholder="Digite o nome do curso" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="periodoCurso">Período:</label>
-                    <input type="text" id="periodoCurso" name="periodoCurso" th:value="${curso.periodoCurso}" placeholder="Ex: Noturno, Matutino" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="cargahorariaCurso">Carga Horária Total:</label>
-                    <input type="text" id="cargahorariaCurso" name="cargahorariaCurso" th:value="${curso.cargahorariaCurso}" placeholder="0000" data-mask="number" required>
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-success">💾 Atualizar</button>
-                    <a href="/curso/listar" class="btn btn-secondary">❌ Cancelar</a>
+                <div class="card-footer">
+                    <a class="btn btn-secondary" th:href="@{/curso/listar}">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Salvar curso</button>
                 </div>
             </form>
         </div>
-    </div>
-    <script src="/js/mask.js"></script>
+    </main>
+</div>
 </body>
 </html>

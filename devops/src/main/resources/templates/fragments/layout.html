@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<!-- Cabeçalho comum a todas as páginas -->
+<head th:fragment="head(titulo)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo} + ' · Sistema DevOps'">Sistema DevOps</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script th:src="@{/js/app.js}" defer></script>
+</head>
+
+<body>
+
+<!-- Menu lateral: recebe o nome da seção ativa -->
+<aside class="sidebar" th:fragment="sidebar(ativo)">
+    <div class="sidebar-header">
+        <a class="sidebar-brand" th:href="@{/home}">
+            <span class="brand-mark">D</span>
+            <span>Sistema DevOps</span>
+        </a>
+        <button type="button" class="sidebar-toggle" aria-expanded="false" aria-label="Abrir menu">Menu</button>
+    </div>
+
+    <nav class="sidebar-nav">
+        <div class="nav-section">
+            <a class="nav-link" th:href="@{/home}" th:classappend="${ativo == 'home'} ? 'active'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>
+                Início
+            </a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">Acadêmico</div>
+            <a class="nav-link" th:href="@{/aluno/listar}" th:classappend="${ativo == 'alunos'} ? 'active'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+                Alunos
+            </a>
+            <a class="nav-link" th:href="@{/curso/listar}" th:classappend="${ativo == 'cursos'} ? 'active'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/></svg>
+                Cursos
+            </a>
+            <a class="nav-link" th:href="@{/professor/listar}" th:classappend="${ativo == 'professores'} ? 'active'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="1"/><path d="M8 20h8M12 16v4"/></svg>
+                Professores
+            </a>
+            <a class="nav-link" th:href="@{/disciplina/listar}" th:classappend="${ativo == 'disciplinas'} ? 'active'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"/><path d="M4 17a3 3 0 0 1 3-3h11"/></svg>
+                Disciplinas
+            </a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">Loja</div>
+            <a class="nav-link" th:href="@{/produto/listar}" th:classappend="${ativo == 'produtos'} ? 'active'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>
+                Produtos
+            </a>
+            <a class="nav-link" th:href="@{/pedido/listar}" th:classappend="${ativo == 'pedidos'} ? 'active'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 5v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7z"/><path d="M4 7h16M9 11h6"/></svg>
+                Pedidos
+            </a>
+        </div>
+
+        <div class="nav-section" th:if="${usuarioAdmin}">
+            <div class="nav-section-title">Administração</div>
+            <a class="nav-link" th:href="@{/usuario/listar}" th:classappend="${ativo == 'usuarios'} ? 'active'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2 20a7 7 0 0 1 14 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 4 6"/></svg>
+                Usuários
+            </a>
+        </div>
+    </nav>
+
+    <div class="sidebar-user" th:if="${usuarioLogado != null}">
+        <span class="avatar" th:text="${#strings.toUpperCase(#strings.substring(usuarioLogado.nomeUsuario, 0, 1))}">A</span>
+        <div class="sidebar-user-info">
+            <div class="sidebar-user-name" th:text="${usuarioLogado.nomeUsuario}">Administrador</div>
+            <div class="sidebar-user-role" th:text="${usuarioLogado.roleUsuario}">ADMIN</div>
+        </div>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn-logout">Sair</button>
+        </form>
+    </div>
+</aside>
+
+<!-- Cabeçalho da experiência de compra para usuários comuns -->
+<header class="store-header" th:fragment="storeHeader(ativo)">
+    <div class="store-header-inner">
+        <a class="store-brand" th:href="@{/loja}">
+            <span class="brand-mark">D</span>
+            <span><strong>DevOps Store</strong><small>Marketplace acadêmico</small></span>
+        </a>
+
+        <nav class="store-nav" aria-label="Navegação da loja">
+            <a th:href="@{/loja}" th:classappend="${ativo == 'loja'} ? 'active'">Produtos</a>
+            <a class="cart-link" th:href="@{/carrinho}" th:classappend="${ativo == 'carrinho'} ? 'active'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="20" r="1"/><circle cx="19" cy="20" r="1"/><path d="M3 4h2l2.4 10.2a2 2 0 0 0 2 1.5h7.9a2 2 0 0 0 2-1.6L21 7H6"/></svg>
+                Carrinho
+                <span class="cart-count" th:text="${quantidadeCarrinho ?: 0}">0</span>
+            </a>
+        </nav>
+
+        <div class="store-user" th:if="${usuarioLogado != null}">
+            <span class="store-user-name" th:text="${usuarioLogado.nomeUsuario}">Cliente</span>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-secondary btn-sm">Sair</button>
+            </form>
+        </div>
+    </div>
+</header>
+
+<!-- Mensagens de sucesso e erro (flash attributes ou model) -->
+<div th:fragment="alertas" th:remove="tag">
+    <div class="alert alert-success" role="status" th:if="${mensagem}">
+        <span th:text="${mensagem}">Operação realizada com sucesso.</span>
+        <button type="button" class="alert-close" aria-label="Fechar">&times;</button>
+    </div>
+    <div class="alert alert-error" role="alert" th:if="${erro}">
+        <span th:text="${erro}">Não foi possível concluir a operação.</span>
+        <button type="button" class="alert-close" aria-label="Fechar">&times;</button>
+    </div>
+</div>
+
+<!-- Badge colorido para o status do pedido -->
+<span th:fragment="statusPedido(status)" class="badge"
+      th:classappend="${status == null} ? '' : (${status.name() == 'PAGO'} ? 'badge-primary' : (${status.name() == 'ENVIADO'} ? 'badge-info' : (${status.name() == 'ENTREGUE'} ? 'badge-success' : (${status.name() == 'CANCELADO'} ? 'badge-danger' : 'badge-warning'))))"
+      th:text="${status != null ? status.descricao : '-'}">Pendente</span>
+
+</body>
+</html>

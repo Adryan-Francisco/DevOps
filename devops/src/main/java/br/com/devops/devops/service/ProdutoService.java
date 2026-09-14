@@ -1,40 +1,67 @@
 package br.com.devops.devops.service;
 
 import br.com.devops.devops.entity.Produto;
+import br.com.devops.devops.exception.RegraNegocioException;
+import br.com.devops.devops.repository.ItemDoPedidoRepository;
 import br.com.devops.devops.repository.ProdutoRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Locale;
 
 @Service
+@Transactional(readOnly = true)
 public class ProdutoService {
     private static final long TAMANHO_MAXIMO_FOTO = 5 * 1024 * 1024;
     private static final Set<String> TIPOS_FOTO_PERMITIDOS = Set.of(
             "image/jpeg", "image/png", "image/gif", "image/webp");
 
     private final ProdutoRepository produtoRepository;
+    private final ItemDoPedidoRepository itemDoPedidoRepository;
 
-    public ProdutoService(ProdutoRepository produtoRepository) {
+    public ProdutoService(ProdutoRepository produtoRepository, ItemDoPedidoRepository itemDoPedidoRepository) {
         this.produtoRepository = produtoRepository;
+        this.itemDoPedidoRepository = itemDoPedidoRepository;
     }
 
-    public List<Produto> listarTodos() { return produtoRepository.findAll(); }
+    public List<Produto> listarTodos() { return produtoRepository.findAllByOrderByNomeProduto(); }
     public Optional<Produto> buscarPorId(Integer id) { return produtoRepository.findById(id); }
+
+    public List<Produto> listarDisponiveis(String busca) {
+        String termo = busca == null ? "" : busca.trim().toLowerCase(Locale.ROOT);
+        return produtoRepository.findByQuantidadeEstoqueGreaterThanOrderByNomeProduto(0).stream()
+                .filter(produto -> termo.isEmpty()
+                        || produto.getNomeProduto().toLowerCase(Locale.ROOT).contains(termo)
+                        || produto.getDescricaoProduto().toLowerCase(Locale.ROOT).contains(termo))
+                .toList();
+    }
+
+    @Transactional
     public Produto salvar(Produto produto, MultipartFile fotoArquivo) {
+        produto.setIdProduto(null);
         produto.setFoto(null);
         produto.setTipoFoto(null);
         atualizarFoto(produto, fotoArquivo);
         return produtoRepository.save(produto);
     }
-    public void deletar(Integer id) { produtoRepository.deleteById(id); }
 
+    @Transactional
+    public void deletar(Integer id) {
+        if (itemDoPedidoRepository.existsByProdutoIdProduto(id)) {
+            throw new RegraNegocioException("Este produto está em pedidos e não pode ser excluído.");
+        }
+        produtoRepository.deleteById(id);
+    }
+
+    @Transactional
     public Produto atualizar(Integer id, Produto dados, MultipartFile fotoArquivo) {
         Produto produto = produtoRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado"));
+                .orElseThrow(() -> new RegraNegocioException("Produto não encontrado."));
         produto.setNomeProduto(dados.getNomeProduto());
         produto.setDescricaoProduto(dados.getDescricaoProduto());
         produto.setPrecoProduto(dados.getPrecoProduto());
@@ -50,21 +77,21 @@ public class ProdutoService {
 
         String tipoFoto = fotoArquivo.getContentType();
         if (tipoFoto == null || !TIPOS_FOTO_PERMITIDOS.contains(tipoFoto)) {
-            throw new IllegalArgumentException("Envie uma foto JPG, PNG, GIF ou WEBP");
+            throw new RegraNegocioException("Envie uma foto JPG, PNG, GIF ou WEBP");
         }
         if (fotoArquivo.getSize() > TAMANHO_MAXIMO_FOTO) {
-            throw new IllegalArgumentException("A foto deve ter no máximo 5 MB");
+            throw new RegraNegocioException("A foto deve ter no máximo 5 MB");
         }
 
         try {
             byte[] conteudo = fotoArquivo.getBytes();
             if (!assinaturaCompativel(tipoFoto, conteudo)) {
-                throw new IllegalArgumentException("O conteúdo do arquivo não corresponde ao tipo da foto");
+                throw new RegraNegocioException("O conteúdo do arquivo não corresponde ao tipo da foto");
             }
             produto.setFoto(conteudo);
             produto.setTipoFoto(tipoFoto);
         } catch (IOException ex) {
-            throw new IllegalArgumentException("Não foi possível ler a foto enviada", ex);
+            throw new RegraNegocioException("Não foi possível ler a foto enviada");
         }
     }
 

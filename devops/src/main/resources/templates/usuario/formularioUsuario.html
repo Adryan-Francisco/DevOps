@@ -1,74 +1,73 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Formulário de Usuário</title>
-	<link rel="stylesheet" href="/css/styles.css">
-</head>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${usuario.idUsuario == null ? 'Novo usuário' : 'Editar usuário'})}"></head>
 <body>
-<nav>
-	<div class="nav-container">
-		<div class="logo">Sistema DevOps</div>
-		<ul class="nav-links">
-			<li><a href="/">Início</a></li>
-			<li><a href="/usuario/listar">Listar Usuários</a></li>
-		</ul>
-	</div>
-</nav>
+<div class="app">
+    <aside th:replace="~{fragments/layout :: sidebar('usuarios')}"></aside>
 
-<div class="page-header">
-	<h1 th:text="${usuario.idUsuario == null ? 'Novo Usuário' : 'Editar Usuário'}">Novo Usuário</h1>
-	<p>Cadastre um novo acesso com nome, login, senha e perfil</p>
-</div>
+    <main class="main">
+        <div class="content">
+            <div class="page-head">
+                <div>
+                    <div class="breadcrumb"><a th:href="@{/usuario/listar}">Usuários</a><span>/</span></div>
+                    <h1 th:text="${usuario.idUsuario == null ? 'Novo usuário' : 'Editar usuário'}">Novo usuário</h1>
+                    <p>Campos marcados com * são obrigatórios.</p>
+                </div>
+            </div>
 
+            <th:block th:replace="~{fragments/layout :: alertas}"></th:block>
 
-<div class="container form-shell">
-	<form th:action="@{/usuario/salvar}" th:object="${usuario}" method="post" class="form-card form-grid" novalidate>
-		<div th:if="${#fields.hasAnyErrors()}" class="alerta" style="grid-column: 1 / -1; margin-bottom: 0;">
-			Verifique os campos destacados abaixo.
-		</div>
-		<input type="hidden" th:field="*{idUsuario}">
+            <form class="card form-card" th:action="@{/usuario/salvar}" th:object="${usuario}" method="post" novalidate>
+                <input type="hidden" th:field="*{idUsuario}">
 
-		<div class="form-group">
-			<label for="nomeUsuario">Nome</label>
-			<input type="text" id="nomeUsuario" th:field="*{nomeUsuario}" th:classappend="${#fields.hasErrors('nomeUsuario')} ? 'is-invalid' : ''" required>
-			<small class="field-error" th:if="${#fields.hasErrors('nomeUsuario')}" th:errors="*{nomeUsuario}"></small>
-		</div>
+                <div class="card-body form-grid">
+                    <div class="form-group">
+                        <label class="required" for="nomeUsuario">Nome</label>
+                        <input class="form-control" type="text" th:field="*{nomeUsuario}" th:errorclass="is-invalid"
+                               maxlength="80" required>
+                        <small class="field-error" th:errors="*{nomeUsuario}"></small>
+                    </div>
 
-		<div class="form-group">
-			<label for="emailUsuario">Email</label>
-			<input type="email" id="emailUsuario" th:field="*{emailUsuario}" th:classappend="${#fields.hasErrors('emailUsuario')} ? 'is-invalid' : ''" required>
-			<small class="field-error" th:if="${#fields.hasErrors('emailUsuario')}" th:errors="*{emailUsuario}"></small>
-		</div>
+                    <div class="form-group">
+                        <label class="required" for="emailUsuario">Email</label>
+                        <input class="form-control" type="email" th:field="*{emailUsuario}" th:errorclass="is-invalid"
+                               maxlength="100" required>
+                        <small class="field-error" th:errors="*{emailUsuario}"></small>
+                    </div>
 
-		<div class="form-group">
-			<label for="loginUsuario">Login</label>
-			<input type="text" id="loginUsuario" th:field="*{loginUsuario}" th:classappend="${#fields.hasErrors('loginUsuario')} ? 'is-invalid' : ''" required>
-			<small class="field-error" th:if="${#fields.hasErrors('loginUsuario')}" th:errors="*{loginUsuario}"></small>
-		</div>
+                    <div class="form-group">
+                        <label class="required" for="loginUsuario">Login</label>
+                        <input class="form-control" type="text" th:field="*{loginUsuario}" th:errorclass="is-invalid"
+                               maxlength="30" autocomplete="off" required>
+                        <small class="field-error" th:errors="*{loginUsuario}"></small>
+                    </div>
 
-		<div class="form-group">
-			<label for="senhaUsuario">Senha</label>
-			<input type="password" id="senhaUsuario" th:field="*{senhaUsuario}" th:classappend="${#fields.hasErrors('senhaUsuario')} ? 'is-invalid' : ''" th:required="${usuario.idUsuario == null}">
-			<small th:if="${usuario.idUsuario != null}">Deixe em branco para manter a senha atual.</small>
-			<small class="field-error" th:if="${#fields.hasErrors('senhaUsuario')}" th:errors="*{senhaUsuario}"></small>
-		</div>
+                    <div class="form-group">
+                        <label class="required" for="roleUsuario">Perfil</label>
+                        <select class="form-control" th:field="*{roleUsuario}" th:errorclass="is-invalid" required>
+                            <option value="">Selecione</option>
+                            <option th:each="role : ${roles}" th:value="${role}" th:text="${role}">ADMIN</option>
+                        </select>
+                        <small class="field-error" th:errors="*{roleUsuario}"></small>
+                    </div>
 
-		<div class="form-group">
-			<label for="roleUsuario">Role</label>
-			<select id="roleUsuario" th:field="*{roleUsuario}" th:classappend="${#fields.hasErrors('roleUsuario')} ? 'is-invalid' : ''" required>
-				<option value="" disabled th:selected="${usuario.roleUsuario == null || usuario.roleUsuario.isBlank()}">Selecione</option>
-				<option th:each="role : ${roles}" th:value="${role}" th:text="${role}"></option>
-			</select>
-			<small class="field-error" th:if="${#fields.hasErrors('roleUsuario')}" th:errors="*{roleUsuario}"></small>
-		</div>
+                    <div class="form-group full">
+                        <label th:classappend="${usuario.idUsuario == null} ? 'required'" for="senhaUsuario">Senha</label>
+                        <input class="form-control" type="password" th:field="*{senhaUsuario}" th:errorclass="is-invalid"
+                               autocomplete="new-password" minlength="6" maxlength="100">
+                        <small class="form-hint" th:text="${usuario.idUsuario == null ? 'Mínimo de 6 caracteres.' : 'Deixe em branco para manter a senha atual.'}">
+                            Mínimo de 6 caracteres.</small>
+                        <small class="field-error" th:errors="*{senhaUsuario}"></small>
+                    </div>
+                </div>
 
-		<div class="form-actions">
-			<button type="submit" class="btn btn-primary">Salvar</button>
-			<a href="/usuario/listar" class="btn btn-secondary">Cancelar</a>
-		</div>
-	</form>
+                <div class="card-footer">
+                    <a class="btn btn-secondary" th:href="@{/usuario/listar}">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Salvar usuário</button>
+                </div>
+            </form>
+        </div>
+    </main>
 </div>
 </body>
 </html>

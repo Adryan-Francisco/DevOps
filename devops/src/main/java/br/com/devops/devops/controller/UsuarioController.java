@@ -1,8 +1,7 @@
 package br.com.devops.devops.controller;
 
-import java.util.Optional;
+import java.security.Principal;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.com.devops.devops.entity.Usuario;
+import br.com.devops.devops.exception.RegraNegocioException;
 import br.com.devops.devops.service.UsuarioService;
 import jakarta.validation.Valid;
 
@@ -22,9 +22,13 @@ import jakarta.validation.Valid;
 public class UsuarioController {
 
     private static final String[] ROLES = { "ADMIN", "ALUNO", "PROFESSOR", "SECRETARIA", "USER" };
+    private static final String FORMULARIO = "usuario/formularioUsuario";
 
-    @Autowired
-    private UsuarioService usuarioService;
+    private final UsuarioService usuarioService;
+
+    public UsuarioController(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
+    }
 
     @GetMapping("/listar")
     public String listar(Model model) {
@@ -36,44 +40,64 @@ public class UsuarioController {
     public String formulario(Model model) {
         model.addAttribute("usuario", new Usuario());
         model.addAttribute("roles", ROLES);
-        return "usuario/formularioUsuario";
+        return FORMULARIO;
     }
 
     @PostMapping("/salvar")
     public String salvar(@Valid @ModelAttribute Usuario usuario, BindingResult bindingResult, Model model,
             RedirectAttributes redirectAttributes) {
-        if (usuario.getIdUsuario() == null
-                && (usuario.getSenhaUsuario() == null || usuario.getSenhaUsuario().isBlank())) {
+        boolean novo = usuario.getIdUsuario() == null;
+        String senha = usuario.getSenhaUsuario();
+
+        if (novo && (senha == null || senha.isBlank())) {
             bindingResult.rejectValue("senhaUsuario", "senhaUsuario.required", "A senha é obrigatória.");
+        } else if (senha != null && !senha.isBlank() && senha.length() < 6) {
+            bindingResult.rejectValue("senhaUsuario", "senhaUsuario.size", "A senha deve ter pelo menos 6 caracteres.");
+        }
+        if (usuario.getLoginUsuario() != null && usuarioService.loginEmUso(usuario.getLoginUsuario(), usuario.getIdUsuario())) {
+            bindingResult.rejectValue("loginUsuario", "loginUsuario.unique", "Este login já está em uso.");
+        }
+        if (usuario.getEmailUsuario() != null && usuarioService.emailEmUso(usuario.getEmailUsuario(), usuario.getIdUsuario())) {
+            bindingResult.rejectValue("emailUsuario", "emailUsuario.unique", "Este email já está em uso.");
         }
 
         if (bindingResult.hasErrors()) {
+            usuario.setSenhaUsuario(null);
             model.addAttribute("roles", ROLES);
-            return "usuario/formularioUsuario";
+            return FORMULARIO;
         }
 
-        usuarioService.salvar(usuario);
-        redirectAttributes.addFlashAttribute("mensagem", "Usuário salvo com sucesso!");
+        try {
+            usuarioService.salvar(usuario);
+        } catch (RegraNegocioException ex) {
+            redirectAttributes.addFlashAttribute("erro", ex.getMessage());
+            return "redirect:/usuario/listar";
+        }
+        redirectAttributes.addFlashAttribute("mensagem", novo ? "Usuário cadastrado com sucesso!" : "Usuário atualizado com sucesso!");
         return "redirect:/usuario/listar";
     }
 
     @GetMapping("/editar/{id}")
-    public String editar(@PathVariable Integer id, Model model) {
-        Optional<Usuario> usuario = usuarioService.buscarPorId(id);
-        if (usuario.isPresent()) {
-            Usuario usuarioEditado = usuario.get();
-            usuarioEditado.setSenhaUsuario(null);
-            model.addAttribute("usuario", usuarioEditado);
+    public String editar(@PathVariable Integer id, Model model, RedirectAttributes redirectAttributes) {
+        return usuarioService.buscarPorId(id).map(usuario -> {
+            usuario.setSenhaUsuario(null);
+            model.addAttribute("usuario", usuario);
             model.addAttribute("roles", ROLES);
-            return "usuario/formularioUsuario";
-        }
-        return "redirect:/usuario/listar";
+            return FORMULARIO;
+        }).orElseGet(() -> {
+            redirectAttributes.addFlashAttribute("erro", "Usuário não encontrado.");
+            return "redirect:/usuario/listar";
+        });
     }
 
-    @GetMapping("/deletar/{id}")
-    public String deletar(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
-        usuarioService.deletar(id);
-        redirectAttributes.addFlashAttribute("mensagem", "Usuário deletado com sucesso!");
+    @PostMapping("/deletar/{id}")
+    public String deletar(@PathVariable Integer id, Principal principal, RedirectAttributes redirectAttributes) {
+        try {
+            usuarioService.deletar(id, principal.getName());
+            redirectAttributes.addFlashAttribute("mensagem", "Usuário excluído com sucesso!");
+        } catch (RegraNegocioException ex) {
+            redirectAttributes.addFlashAttribute("erro", ex.getMessage());
+        }
         return "redirect:/usuario/listar";
     }
 }

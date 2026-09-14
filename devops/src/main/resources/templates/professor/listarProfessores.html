@@ -1,75 +1,63 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Listar Professores</title>
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
+<head th:replace="~{fragments/layout :: head('Professores')}"></head>
 <body>
-    <nav>
-        <div class="nav-container">
-            <div class="logo"> Sistema DevOps</div>
-            <ul class="nav-links">
-                <li><a href="/">Início</a></li>
-                <li><a href="/aluno/listar">Alunos</a></li>
-                <li><a href="/curso/listar">Cursos</a></li>
-                <li><a href="/professor/listar">Professores</a></li>
-                <li><a href="/disciplina/listar">Disciplinas</a></li>
-            </ul>
-        </div>
-    </nav>
+<div class="app">
+    <aside th:replace="~{fragments/layout :: sidebar('professores')}"></aside>
 
-    <div class="page-header">
-        <h1>Professores</h1>
-        <p>Gerencie os dados dos professores da instituição</p>
-    </div>
-
-    <div class="container">
-        <div class="alerta" th:if="${mensagem}">
-            <p th:text="${mensagem}"></p>
-        </div>
-
-        <div class="table-container">
-            <div class="table-header">
-                <h2>Lista de Professores</h2>
-                <a href="/professor/formulario" class="btn btn-primary">➕ Novo Professor</a>
+    <main class="main">
+        <div class="content">
+            <div class="page-head">
+                <div>
+                    <h1>Professores</h1>
+                    <p>Gerencie os dados dos professores da instituição.</p>
+                </div>
+                <a class="btn btn-primary" th:href="@{/professor/formulario}">Novo professor</a>
             </div>
 
-            <div style="overflow-x: auto;">
-                <table class="tabela">
-                    <thead>
+            <th:block th:replace="~{fragments/layout :: alertas}"></th:block>
+
+            <section class="card">
+                <div class="table-wrap" th:unless="${#lists.isEmpty(professores)}">
+                    <table class="table">
+                        <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Nome</th>
-                            <th>Telefone</th>
-                            <th>Graduação</th>
+                            <th>Professor</th>
                             <th>RM</th>
-                            <th>Ações</th>
+                            <th>Telefone</th>
+                            <th class="actions">Ações</th>
                         </tr>
-                    </thead>
-                    <tbody>
+                        </thead>
+                        <tbody>
                         <tr th:each="professor : ${professores}">
-                            <td th:text="${professor.idProfessor}"></td>
-                            <td th:text="${professor.nomeProfessor}"></td>
-                            <td th:text="${professor.telefoneProfessor}"></td>
-                            <td th:text="${professor.graduacaoProfessor}"></td>
-                            <td th:text="${professor.rmProfessor}"></td>
                             <td>
-                                <div class="acoes">
-                                    <a th:href="@{/professor/editar/{id}(id=${professor.idProfessor})}" class="btn btn-small btn-info">✏️ Editar</a>
-                                    <a th:href="@{/professor/deletar/{id}(id=${professor.idProfessor})}" class="btn btn-small btn-danger" onclick="return confirm('Tem certeza que deseja deletar?')">🗑️ Deletar</a>
+                                <div class="cell-main" th:text="${professor.nomeProfessor}">Nome</div>
+                                <div class="cell-sub" th:text="${professor.graduacaoProfessor}">Graduação</div>
+                            </td>
+                            <td th:text="${professor.rmProfessor}">00000-0</td>
+                            <td th:text="${professor.telefoneProfessor}">(00) 00000-0000</td>
+                            <td class="actions">
+                                <div class="actions-group">
+                                    <a class="btn btn-ghost btn-sm" th:href="@{/professor/editar/{id}(id=${professor.idProfessor})}">Editar</a>
+                                    <form th:action="@{/professor/deletar/{id}(id=${professor.idProfessor})}" method="post"
+                                          th:attr="data-confirm='Excluir o professor ' + ${professor.nomeProfessor} + '?'">
+                                        <button type="submit" class="btn btn-ghost-danger btn-sm">Excluir</button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                        </tbody>
+                    </table>
+                </div>
 
-        <div class="text-center mt-3">
-            <a href="/" class="btn btn-secondary"> Voltar</a>
+                <div class="empty-state" th:if="${#lists.isEmpty(professores)}">
+                    <strong>Nenhum professor cadastrado</strong>
+                    Cadastre professores para vinculá-los às disciplinas.
+                    <div><a class="btn btn-primary" th:href="@{/professor/formulario}">Novo professor</a></div>
+                </div>
+            </section>
         </div>
-    </div>
+    </main>
+</div>
 </body>
 </html>

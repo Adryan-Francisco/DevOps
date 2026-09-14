@@ -1,41 +1,32 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recuperar Senha - Sistema DevOps</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
-</head>
+<head th:replace="~{fragments/layout :: head('Recuperar senha')}"></head>
 <body class="auth-page">
-    <main class="auth-layout">
-        <section class="auth-panel">
-            <div class="auth-brand">
-                <span class="auth-badge">Sistema DevOps</span>
-                <h1>Recuperar senha</h1>
-                <p>Informe o email cadastrado para receber o link de redefinicao.</p>
+<main class="auth-layout">
+    <section class="auth-panel">
+        <div class="auth-brand">
+            <div class="brand"><span class="brand-mark">D</span> Sistema DevOps</div>
+            <h1>Recuperar senha</h1>
+            <p>Informe o email cadastrado para receber o link de redefinição.</p>
+        </div>
+
+        <form class="auth-form" th:action="@{/recuperar-senha}" method="post">
+            <div class="alert alert-success" role="status" th:if="${mensagemSucesso}" th:text="${mensagemSucesso}"></div>
+            <div class="alert alert-error" role="alert" th:if="${mensagemErro}" th:text="${mensagemErro}"></div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input class="form-control" type="email" id="email" name="email"
+                       placeholder="Digite seu email cadastrado" autocomplete="email" required autofocus>
             </div>
 
-            <form class="auth-form" th:action="@{/recuperar-senha}" method="post">
-                <div class="alerta alerta-sucesso" th:if="${mensagemSucesso}">
-                    <span th:text="${mensagemSucesso}"></span>
-                </div>
+            <button type="submit" class="btn btn-primary btn-block">Enviar link</button>
 
-                <div class="alerta alerta-erro" th:if="${mensagemErro}">
-                    <span th:text="${mensagemErro}"></span>
-                </div>
-
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" placeholder="Digite seu email cadastrado" required autofocus>
-                </div>
-
-                <button type="submit" class="btn btn-primary btn-full">Enviar link</button>
-
-                <div class="auth-links">
-                    <a th:href="@{/login}">Voltar para o login</a>
-                </div>
-            </form>
-        </section>
-    </main>
+            <div class="auth-links">
+                <a th:href="@{/login}">Voltar para o login</a>
+            </div>
+        </form>
+    </section>
+</main>
 </body>
 </html>

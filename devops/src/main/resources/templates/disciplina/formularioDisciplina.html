@@ -1,116 +1,79 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulário Disciplina</title>
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
+<head th:replace="~{fragments/layout :: head(${disciplina.idDisciplina == null ? 'Nova disciplina' : 'Editar disciplina'})}"></head>
 <body>
-    <nav>
-        <div class="nav-container">
-            <div class="logo">Sistema DevOps</div>
-            <ul class="nav-links">
-                <li><a href="/">Início</a></li>
-                <li><a href="/aluno/listar">Alunos</a></li>
-                <li><a href="/curso/listar">Cursos</a></li>
-                <li><a href="/professor/listar">Professores</a></li>
-                <li><a href="/disciplina/listar">Disciplinas</a></li>
-            </ul>
-        </div>
-    </nav>
+<div class="app">
+    <aside th:replace="~{fragments/layout :: sidebar('disciplinas')}"></aside>
 
-    <div class="page-header">
-        <h1 th:if="${disciplina.idDisciplina == null}">Nova Disciplina</h1>
-        <h1 th:unless="${disciplina.idDisciplina == null}">Editar Disciplina</h1>
-        <p>Preencha os dados da disciplina</p>
-    </div>
+    <main class="main">
+        <div class="content">
+            <div class="page-head">
+                <div>
+                    <div class="breadcrumb"><a th:href="@{/disciplina/listar}">Disciplinas</a><span>/</span></div>
+                    <h1 th:text="${disciplina.idDisciplina == null ? 'Nova disciplina' : 'Editar disciplina'}">Nova disciplina</h1>
+                    <p>Campos marcados com * são obrigatórios.</p>
+                </div>
+            </div>
 
-    <div class="container">
-        <div class="form-container">
-            <form th:if="${disciplina.idDisciplina == null}" th:action="@{/disciplina/salvar}" method="post">
-                <h2 class="form-title">Cadastro de Disciplina</h2>
+            <th:block th:replace="~{fragments/layout :: alertas}"></th:block>
 
-                <div class="form-group">
-                    <label for="nomeDisciplina">Nome da Disciplina:</label>
-                    <input type="text" id="nomeDisciplina" name="nomeDisciplina" th:value="${disciplina.nomeDisciplina}" placeholder="Digite o nome da disciplina" required>
+            <form class="card form-card" th:object="${disciplina}" method="post" novalidate
+                  th:action="${disciplina.idDisciplina == null} ? @{/disciplina/salvar} : @{/disciplina/atualizar/{id}(id=${disciplina.idDisciplina})}">
+                <div class="card-body form-grid">
+                    <div class="form-group full">
+                        <label class="required" for="nomeDisciplina">Nome da disciplina</label>
+                        <input class="form-control" type="text" th:field="*{nomeDisciplina}" th:errorclass="is-invalid"
+                               maxlength="100" placeholder="Ex: Programação Orientada a Objetos" required>
+                        <small class="field-error" th:errors="*{nomeDisciplina}"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required" for="siglaDisciplina">Sigla</label>
+                        <input class="form-control" type="text" th:field="*{siglaDisciplina}" th:errorclass="is-invalid"
+                               maxlength="10" placeholder="Ex: POO" required>
+                        <small class="field-error" th:errors="*{siglaDisciplina}"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required" for="cargaHorariaDisciplina">Carga horária (horas)</label>
+                        <input class="form-control" type="number" min="1" th:field="*{cargaHorariaDisciplina}"
+                               th:errorclass="is-invalid" placeholder="Ex: 80" required>
+                        <small class="field-error" th:errors="*{cargaHorariaDisciplina}"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required" for="cursoId">Curso</label>
+                        <select class="form-control" id="cursoId" name="cursoId" required>
+                            <option value="">Selecione um curso</option>
+                            <option th:each="curso : ${cursos}" th:value="${curso.idCurso}" th:text="${curso.nomeCurso}"
+                                    th:selected="${curso.idCurso == cursoId}">Curso</option>
+                        </select>
+                        <small class="form-hint" th:if="${#lists.isEmpty(cursos)}">
+                            Nenhum curso cadastrado. <a th:href="@{/curso/formulario}">Cadastrar curso</a>
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required" for="professorId">Professor</label>
+                        <select class="form-control" id="professorId" name="professorId" required>
+                            <option value="">Selecione um professor</option>
+                            <option th:each="professor : ${professores}" th:value="${professor.idProfessor}"
+                                    th:text="${professor.nomeProfessor}"
+                                    th:selected="${professor.idProfessor == professorId}">Professor</option>
+                        </select>
+                        <small class="form-hint" th:if="${#lists.isEmpty(professores)}">
+                            Nenhum professor cadastrado. <a th:href="@{/professor/formulario}">Cadastrar professor</a>
+                        </small>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="siglaDisciplina">Sigla:</label>
-                    <input type="text" id="siglaDisciplina" name="siglaDisciplina" th:value="${disciplina.siglaDisciplina}" placeholder="Ex: POO, BD" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="cargaHorariaDisciplina">Carga Horária:</label>
-                    <input type="text" id="cargaHorariaDisciplina" name="cargaHorariaDisciplina" th:value="${disciplina.cargaHorariaDisciplina}" placeholder="0000" data-mask="number" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="idProfessor">Professor:</label>
-                    <select id="idProfessor" name="professor.idProfessor" required>
-                        <option value="">Selecione um professor</option>
-                        <option th:each="professor : ${professores}" th:value="${professor.idProfessor}" th:text="${professor.nomeProfessor}"></option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="idCurso">Curso:</label>
-                    <select id="idCurso" name="idCurso" required>
-                        <option value="">Selecione um curso</option>
-                        <option th:each="curso : ${cursos}" th:value="${curso.idCurso}" th:text="${curso.nomeCurso}"></option>
-                    </select>
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-success">💾 Salvar</button>
-                    <a href="/disciplina/listar" class="btn btn-secondary">❌ Cancelar</a>
-                </div>
-            </form>
-
-            <form th:unless="${disciplina.idDisciplina == null}" th:action="@{/disciplina/atualizar/{id}(id=${disciplina.idDisciplina})}" method="post">
-                <h2 class="form-title">Editar Disciplina</h2>
-
-                <input type="hidden" name="idDisciplina" th:value="${disciplina.idDisciplina}">
-
-                <div class="form-group">
-                    <label for="nomeDisciplina">Nome da Disciplina:</label>
-                    <input type="text" id="nomeDisciplina" name="nomeDisciplina" th:value="${disciplina.nomeDisciplina}" placeholder="Digite o nome da disciplina" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="siglaDisciplina">Sigla:</label>
-                    <input type="text" id="siglaDisciplina" name="siglaDisciplina" th:value="${disciplina.siglaDisciplina}" placeholder="Ex: POO, BD" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="cargaHorariaDisciplina">Carga Horária:</label>
-                    <input type="text" id="cargaHorariaDisciplina" name="cargaHorariaDisciplina" th:value="${disciplina.cargaHorariaDisciplina}" placeholder="0000" data-mask="number" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="idProfessorEdicao">Professor:</label>
-                    <select id="idProfessorEdicao" name="professor.idProfessor" required>
-                        <option value="">Selecione um professor</option>
-                        <option th:each="professor : ${professores}" th:value="${professor.idProfessor}" th:text="${professor.nomeProfessor}" th:selected="${disciplina.professor != null and disciplina.professor.idProfessor == professor.idProfessor}"></option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="idCursoEdicao">Curso:</label>
-                    <select id="idCursoEdicao" name="idCurso" required>
-                        <option value="">Selecione um curso</option>
-                        <option th:each="curso : ${cursos}" th:value="${curso.idCurso}" th:text="${curso.nomeCurso}" th:selected="${disciplina.idCurso == curso.idCurso}"></option>
-                    </select>
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-success">💾 Atualizar</button>
-                    <a href="/disciplina/listar" class="btn btn-secondary">❌ Cancelar</a>
+                <div class="card-footer">
+                    <a class="btn btn-secondary" th:href="@{/disciplina/listar}">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Salvar disciplina</button>
                 </div>
             </form>
         </div>
-    </div>
-    <script src="/js/mask.js"></script>
+    </main>
+</div>
 </body>
 </html>

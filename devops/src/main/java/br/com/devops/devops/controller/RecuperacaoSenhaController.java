@@ -43,8 +43,10 @@ public class RecuperacaoSenhaController {
     }
 
     @GetMapping("/redefinir-senha")
-    public String paginaRedefinir(@RequestParam String token, Model model) {
-        Optional<Usuario> usuarioOpt = recuperacaoSenhaService.validarToken(token);
+    public String paginaRedefinir(@RequestParam(required = false) String token, Model model) {
+        Optional<Usuario> usuarioOpt = token == null || token.isBlank()
+                ? Optional.empty()
+                : recuperacaoSenhaService.validarToken(token);
 
         if (usuarioOpt.isPresent()) {
             model.addAttribute("token", token);

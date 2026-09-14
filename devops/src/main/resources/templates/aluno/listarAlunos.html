@@ -1,100 +1,70 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.thymeleaf.org"> 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Alunos</title>
-    <link rel="stylesheet" href="/css/styles.css?v=3">
-</head>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Alunos')}"></head>
 <body>
-    <nav>
-        <div class="nav-container">
-            <div class="logo">📚 Sistema DevOps</div>
-            <ul class="nav-links">
-                <li><a href="/">Início</a></li>
-                <li><a href="/aluno/listar">Alunos</a></li>
-                <li><a href="/curso/listar">Cursos</a></li>
-                <li><a href="/professor/listar">Professores</a></li>
-                <li><a href="/disciplina/listar">Disciplinas</a></li>
-            </ul>
-        </div>
-    </nav>
+<div class="app">
+    <aside th:replace="~{fragments/layout :: sidebar('alunos')}"></aside>
 
-    <div class="page-header">
-        <h1>Lista de Alunos</h1>
-        <p>Visualize, edite e gerencie os alunos cadastrados no sistema</p>
-    </div>
-
-    <div class="container">
-        <div class="table-container">
-            <div class="table-header">
-                <h2>Alunos Cadastrados</h2>
-                <a class="btn btn-primary" th:href="@{/aluno/formulario}">
-                    ➕ Cadastrar Novo Aluno
-                </a>
+    <main class="main">
+        <div class="content">
+            <div class="page-head">
+                <div>
+                    <h1>Alunos</h1>
+                    <p>Visualize, edite e gerencie os alunos cadastrados.</p>
+                </div>
+                <a class="btn btn-primary" th:href="@{/aluno/formulario}">Novo aluno</a>
             </div>
 
-            <div style="overflow-x: auto;">
-                <table class="tabela">
-                    <thead>
+            <th:block th:replace="~{fragments/layout :: alertas}"></th:block>
+
+            <section class="card">
+                <div class="table-wrap" th:unless="${#lists.isEmpty(alunos)}">
+                    <table class="table">
+                        <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Nome</th>
-                            <th>Email</th>
-                            <th>Telefone</th>
-                            <th>Endereço</th>
-                            <th>CPF</th>
+                            <th>Aluno</th>
                             <th>RA</th>
+                            <th>CPF</th>
+                            <th>Telefone</th>
                             <th>Curso</th>
-                            <th>Ações</th>
+                            <th class="actions">Ações</th>
                         </tr>
-                    </thead>
-
-                    <tbody>
+                        </thead>
+                        <tbody>
                         <tr th:each="aluno : ${alunos}">
-                            <td th:text="${aluno.idAluno}">1</td>
-                            <td th:text="${aluno.nomeAluno}">Nome</td>
-                            <td th:text="${aluno.emailAluno}">email@email.com</td>
-                            <td th:text="${aluno.telefoneAluno}">(00) 00000-0000</td>
-                            <td th:text="${aluno.enderecoAluno}">Endereço</td>
-                            <td th:text="${aluno.cpfAluno}">000.000.000-00</td>
-                            <td th:text="${aluno.raAluno}">0000</td>
-
-                            <td th:text="${aluno.curso != null ? aluno.curso.nomeCurso : 'Sem curso'}">
-                                Curso
-                            </td>
-
                             <td>
-                                <div class="acoes">
-                                    <a 
-                                        class="btn btn-small btn-info" 
-                                        th:href="@{/aluno/editar/{id}(id=${aluno.idAluno})}">
-                                        ✏️ Editar
-                                    </a>
-
-                                    <a 
-                                        class="btn btn-small btn-danger"
-                                        th:href="@{/aluno/deletar/{id}(id=${aluno.idAluno})}"
-                                        onclick="return confirm('Tem certeza que deseja excluir este aluno?');">
-                                        🗑️ Excluir
-                                    </a>
+                                <div class="cell-main" th:text="${aluno.nomeAluno}">Nome</div>
+                                <div class="cell-sub" th:text="${aluno.emailAluno}">email@email.com</div>
+                            </td>
+                            <td th:text="${aluno.raAluno}">0000</td>
+                            <td th:text="${aluno.cpfAluno}">000.000.000-00</td>
+                            <td th:text="${aluno.telefoneAluno}">(00) 00000-0000</td>
+                            <td>
+                                <span class="badge badge-primary" th:if="${aluno.curso != null}" th:text="${aluno.curso.nomeCurso}">Curso</span>
+                                <span class="text-muted" th:unless="${aluno.curso != null}">Sem curso</span>
+                            </td>
+                            <td class="actions">
+                                <div class="actions-group">
+                                    <a class="btn btn-ghost btn-sm" th:href="@{/aluno/editar/{id}(id=${aluno.idAluno})}">Editar</a>
+                                    <form th:action="@{/aluno/deletar/{id}(id=${aluno.idAluno})}" method="post"
+                                          th:attr="data-confirm='Excluir o aluno ' + ${aluno.nomeAluno} + '?'">
+                                        <button type="submit" class="btn btn-ghost-danger btn-sm">Excluir</button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-                        <tr th:if="${#lists.isEmpty(alunos)}">
-                            <td colspan="9" style="text-align: center;">
-                                Nenhum aluno cadastrado.
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                <div class="empty-state" th:if="${#lists.isEmpty(alunos)}">
+                    <strong>Nenhum aluno cadastrado</strong>
+                    Comece cadastrando o primeiro aluno.
+                    <div><a class="btn btn-primary" th:href="@{/aluno/formulario}">Novo aluno</a></div>
+                </div>
+            </section>
         </div>
-
-        <div class="text-center mt-3">
-            <a href="/" class="btn btn-secondary">↩️ Voltar</a>
-        </div>
-    </div>
+    </main>
+</div>
 </body>
 </html>

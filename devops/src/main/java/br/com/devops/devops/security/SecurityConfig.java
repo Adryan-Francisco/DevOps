@@ -21,31 +21,46 @@ public class SecurityConfig {
         @Autowired
         private PasswordEncoder passwordEncoder;
 
+        @Autowired
+        private PerfilAuthenticationSuccessHandler successHandler;
+
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+                // CSRF fica habilitado: o Thymeleaf injeta o token em todos os formulários com th:action
                 http
-                                .csrf(csrf -> csrf.disable())
                                 .authenticationProvider(authenticationProvider())
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(
-                                                                "/",
                                                                 "/login",
                                                                 "/recuperar-senha",
                                                                 "/redefinir-senha",
-                                                                "/home",
-                                                                "/devops/**",
                                                                 "/error",
                                                                 "/css/**",
                                                                 "/js/**",
-                                                                "/images/**")
+                                                                "/images/**",
+                                                                "/favicon.ico")
                                                 .permitAll()
-                                                .anyRequest().authenticated())
+                                                .requestMatchers("/", "/loja/**", "/carrinho/**", "/produto/foto/**")
+                                                .authenticated()
+                                                .requestMatchers(
+                                                                "/home",
+                                                                "/devops",
+                                                                "/aluno/**",
+                                                                "/curso/**",
+                                                                "/professor/**",
+                                                                "/disciplina/**",
+                                                                "/produto/**",
+                                                                "/pedido/**",
+                                                                "/item-pedido/**",
+                                                                "/usuario/**")
+                                                .hasRole("ADMIN")
+                                                .anyRequest().hasRole("ADMIN"))
                                 .formLogin(form -> form
                                                 .loginPage("/login")
                                                 .loginProcessingUrl("/login")
                                                 .usernameParameter("username")
                                                 .passwordParameter("password")
-                                                .defaultSuccessUrl("/home", true)
+                                                .successHandler(successHandler)
                                                 .failureUrl("/login?error")
                                                 .permitAll())
                                 .logout(logout -> logout

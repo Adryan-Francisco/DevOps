@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Produtos')}"></head>
+<body class="marketplace-page">
+<header th:replace="~{fragments/layout :: storeHeader('loja')}"></header>
+
+<main class="store-main">
+    <section class="store-intro">
+        <div>
+            <span class="eyebrow">Escolha, adicione e revise</span>
+            <h1>Encontre o que você precisa</h1>
+            <p>Produtos disponíveis para compra, com preço e estoque atualizados.</p>
+        </div>
+
+        <form class="store-search" th:action="@{/loja}" method="get" role="search">
+            <label class="sr-only" for="busca">Buscar produtos</label>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+            <input id="busca" name="busca" type="search" th:value="${busca}"
+                   placeholder="Buscar por nome ou descrição">
+            <button class="btn btn-primary" type="submit">Buscar</button>
+        </form>
+    </section>
+
+    <th:block th:replace="~{fragments/layout :: alertas}"></th:block>
+
+    <div class="catalog-head">
+        <div>
+            <h2>Produtos</h2>
+            <p th:text="${#lists.size(produtos)} + (${#lists.size(produtos) == 1} ? ' resultado' : ' resultados')">0 resultados</p>
+        </div>
+        <a class="btn btn-secondary" th:if="${busca != null and !busca.isBlank()}" th:href="@{/loja}">Limpar busca</a>
+    </div>
+
+    <section class="product-grid" aria-label="Lista de produtos" th:unless="${#lists.isEmpty(produtos)}">
+        <article class="product-card" th:each="produto : ${produtos}">
+            <div class="product-media">
+                <img th:if="${produto.foto != null}" th:src="@{/produto/foto/{id}(id=${produto.idProduto})}"
+                     th:alt="${'Foto de ' + produto.nomeProduto}">
+                <div class="product-placeholder" th:unless="${produto.foto != null}" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m21 8-9-5-9 5 9 5z"/><path d="m3 8 9 5 9-5v8l-9 5-9-5z"/><path d="M12 13v8"/></svg>
+                </div>
+                <span class="stock-pill" th:text="${produto.quantidadeEstoque + ' em estoque'}">10 em estoque</span>
+            </div>
+
+            <div class="product-content">
+                <div>
+                    <h3 th:text="${produto.nomeProduto}">Produto</h3>
+                    <p th:text="${produto.descricaoProduto}">Descrição do produto</p>
+                </div>
+                <div class="product-buy">
+                    <strong th:text="${#numbers.formatCurrency(produto.precoProduto)}">R$ 0,00</strong>
+                    <form th:action="@{/carrinho/adicionar/{id}(id=${produto.idProduto})}" method="post">
+                        <input type="hidden" name="quantidade" value="1">
+                        <button class="btn btn-primary" type="submit">Adicionar ao carrinho</button>
+                    </form>
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <section class="store-empty" th:if="${#lists.isEmpty(produtos)}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <h2>Nenhum produto encontrado</h2>
+        <p th:text="${busca != null and !busca.isBlank()} ? 'Tente buscar com outro termo.' : 'Ainda não há produtos disponíveis para compra.'">Nenhum produto disponível.</p>
+        <a class="btn btn-primary" th:if="${busca != null and !busca.isBlank()}" th:href="@{/loja}">Ver todos os produtos</a>
+    </section>
+</main>
+</body>
+</html>

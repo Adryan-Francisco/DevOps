@@ -1,76 +1,72 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Pedidos</title>
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
-
+<head th:replace="~{fragments/layout :: head('Pedidos')}"></head>
 <body>
-    <nav>
-        <div class="nav-container">
-            <div class="logo">Sistema DevOps</div>
-            <ul class="nav-links">
-                <li><a href="/home">Início</a></li>
-                <li><a href="/produto/listar">Produtos</a></li>
-                <li><a href="/pedido/listar">Pedidos</a></li>
-            </ul>
-        </div>
-    </nav>
-    <div class="page-header">
-        <h1>Pedidos</h1>
-        <p>Acompanhe os pedidos cadastrados</p>
-    </div>
-    <div class="container">
-        <div class="alerta" th:if="${mensagem}" th:text="${mensagem}"></div>
-        <div class="alerta" th:if="${erro}" th:text="${erro}"></div>
-        <div class="table-container">
-            <div class="table-header">
-                <h2>Lista de Pedidos</h2><a class="btn btn-primary" href="/pedido/formulario">Novo Pedido</a>
+<div class="app">
+    <aside th:replace="~{fragments/layout :: sidebar('pedidos')}"></aside>
+
+    <main class="main">
+        <div class="content">
+            <div class="page-head">
+                <div>
+                    <h1>Pedidos</h1>
+                    <p>Acompanhe os pedidos feitos pelos alunos.</p>
+                </div>
+                <a class="btn btn-primary" th:href="@{/pedido/formulario}">Novo pedido</a>
             </div>
-            <div style="overflow-x:auto">
-                <table class="tabela">
-                    <thead>
+
+            <th:block th:replace="~{fragments/layout :: alertas}"></th:block>
+
+            <section class="card">
+                <div class="table-wrap" th:unless="${#lists.isEmpty(pedidos)}">
+                    <table class="table">
+                        <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>Pedido</th>
                             <th>Aluno</th>
-                            <th>RA</th>
-                            <th>Itens</th>
-                            <th>Data</th>
                             <th>Status</th>
-                            <th>Total</th>
-                            <th>Ações</th>
+                            <th class="num">Itens</th>
+                            <th class="num">Total</th>
+                            <th class="actions">Ações</th>
                         </tr>
-                    </thead>
-                    <tbody>
+                        </thead>
+                        <tbody>
                         <tr th:each="pedido : ${pedidos}">
-                            <td th:text="${pedido.idPedido}"></td>
-                            <td th:text="${pedido.aluno != null ? pedido.aluno.nomeAluno : pedido.nomeCliente}"></td>
-                            <td th:text="${pedido.aluno != null ? pedido.aluno.raAluno : '-'}"></td>
-                            <td th:text="${#lists.size(pedido.itens)}"></td>
-                            <td th:text="${#temporals.format(pedido.dataPedido, 'dd/MM/yyyy')}"></td>
-                            <td th:text="${pedido.status}"></td>
-                            <td th:text="${#numbers.formatCurrency(pedido.valorTotal)}"></td>
                             <td>
-                                <div class="acoes"><a class="btn btn-small btn-success"
-                                        th:href="@{/item-pedido/listar/{id}(id=${pedido.idPedido})}">Itens</a><a
-                                        class="btn btn-small btn-info"
-                                        th:href="@{/pedido/editar/{id}(id=${pedido.idPedido})}">Editar</a><a
-                                        class="btn btn-small btn-danger"
-                                        th:href="@{/pedido/deletar/{id}(id=${pedido.idPedido})}"
-                                        onclick="return confirm('Tem certeza que deseja deletar?')">Deletar</a></div>
+                                <a class="cell-main" th:href="@{/item-pedido/listar/{id}(id=${pedido.idPedido})}"
+                                   th:text="'#' + ${pedido.idPedido}">#1</a>
+                                <div class="cell-sub" th:text="${#temporals.format(pedido.dataPedido, 'dd/MM/yyyy')}">01/01/2026</div>
+                            </td>
+                            <td>
+                                <div th:text="${pedido.aluno != null ? pedido.aluno.nomeAluno : pedido.nomeCliente}">Aluno</div>
+                                <div class="cell-sub" th:if="${pedido.aluno != null}" th:text="'RA ' + ${pedido.aluno.raAluno}">RA</div>
+                            </td>
+                            <td><span th:replace="~{fragments/layout :: statusPedido(${pedido.status})}"></span></td>
+                            <td class="num" th:text="${pedido.quantidadeItens}">0</td>
+                            <td class="num cell-main" th:text="${#numbers.formatCurrency(pedido.valorTotal)}">R$ 0,00</td>
+                            <td class="actions">
+                                <div class="actions-group">
+                                    <a class="btn btn-secondary btn-sm" th:href="@{/item-pedido/listar/{id}(id=${pedido.idPedido})}">Itens</a>
+                                    <a class="btn btn-ghost btn-sm" th:href="@{/pedido/editar/{id}(id=${pedido.idPedido})}">Editar</a>
+                                    <form th:action="@{/pedido/deletar/{id}(id=${pedido.idPedido})}" method="post"
+                                          th:attr="data-confirm='Excluir o pedido #' + ${pedido.idPedido} + '? Os itens voltarão ao estoque.'">
+                                        <button type="submit" class="btn btn-ghost-danger btn-sm">Excluir</button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
-                        <tr th:if="${#lists.isEmpty(pedidos)}">
-                            <td colspan="8">Nenhum pedido cadastrado.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</body>
+                        </tbody>
+                    </table>
+                </div>
 
+                <div class="empty-state" th:if="${#lists.isEmpty(pedidos)}">
+                    <strong>Nenhum pedido cadastrado</strong>
+                    Crie um pedido para um aluno e depois adicione os produtos.
+                    <div><a class="btn btn-primary" th:href="@{/pedido/formulario}">Novo pedido</a></div>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
+</body>
 </html>

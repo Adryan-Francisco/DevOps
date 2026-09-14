@@ -31,7 +31,7 @@ public class UsuarioDetailsService implements UserDetailsService {
 
         Usuario u = usuario.get();
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + u.getRoleUsuario()));
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + u.getRoleUsuario().trim().toUpperCase()));
 
         return User.builder()
                 .username(u.getLoginUsuario())

@@ -1,77 +1,64 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Listar Disciplinas</title>
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
+<head th:replace="~{fragments/layout :: head('Disciplinas')}"></head>
 <body>
-    <nav>
-        <div class="nav-container">
-            <div class="logo">Sistema DevOps</div>
-            <ul class="nav-links">
-                <li><a href="/">Início</a></li>
-                <li><a href="/aluno/listar">Alunos</a></li>
-                <li><a href="/curso/listar">Cursos</a></li>
-                <li><a href="/professor/listar">Professores</a></li>
-                <li><a href="/disciplina/listar">Disciplinas</a></li>
-            </ul>
-        </div>
-    </nav>
+<div class="app">
+    <aside th:replace="~{fragments/layout :: sidebar('disciplinas')}"></aside>
 
-    <div class="page-header">
-        <h1>Disciplinas</h1>
-        <p>Gerencie as disciplinas oferecidas pelos cursos</p>
-    </div>
-
-    <div class="container">
-        <div class="alerta" th:if="${mensagem}">
-            <p th:text="${mensagem}"></p>
-        </div>
-
-        <div class="table-container">
-            <div class="table-header">
-                <h2>Lista de Disciplinas</h2>
-                <a href="/disciplina/formulario" class="btn btn-primary">➕ Nova Disciplina</a>
+    <main class="main">
+        <div class="content">
+            <div class="page-head">
+                <div>
+                    <h1>Disciplinas</h1>
+                    <p>Gerencie as disciplinas oferecidas pelos cursos.</p>
+                </div>
+                <a class="btn btn-primary" th:href="@{/disciplina/formulario}">Nova disciplina</a>
             </div>
 
-            <div style="overflow-x: auto;">
-                <table class="tabela">
-                    <thead>
+            <th:block th:replace="~{fragments/layout :: alertas}"></th:block>
+
+            <section class="card">
+                <div class="table-wrap" th:unless="${#lists.isEmpty(disciplinas)}">
+                    <table class="table">
+                        <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Nome</th>
                             <th>Sigla</th>
-                            <th>Carga Horária</th>
-                        <th>Professor</th>
-                            <th>ID Curso</th>
-                            <th>Ações</th>
+                            <th>Disciplina</th>
+                            <th>Curso</th>
+                            <th>Professor</th>
+                            <th class="num">Carga horária</th>
+                            <th class="actions">Ações</th>
                         </tr>
-                    </thead>
-                    <tbody>
+                        </thead>
+                        <tbody>
                         <tr th:each="disciplina : ${disciplinas}">
-                            <td th:text="${disciplina.idDisciplina}"></td>
-                            <td th:text="${disciplina.nomeDisciplina}"></td>
-                            <td th:text="${disciplina.siglaDisciplina}"></td>
-                            <td th:text="${disciplina.cargaHorariaDisciplina} + 'h'"></td>
-                            <td th:text="${disciplina.professor.nomeProfessor}"></td>
-                            <td th:text="${disciplina.idCurso}"></td>
-                            <td>
-                                <div class="acoes">
-                                    <a th:href="@{/disciplina/editar/{id}(id=${disciplina.idDisciplina})}" class="btn btn-small btn-info">✏️ Editar</a>
-                                    <a th:href="@{/disciplina/deletar/{id}(id=${disciplina.idDisciplina})}" class="btn btn-small btn-danger" onclick="return confirm('Tem certeza que deseja deletar?')">🗑️ Deletar</a>
+                            <td><span class="badge badge-info" th:text="${disciplina.siglaDisciplina}">POO</span></td>
+                            <td class="cell-main" th:text="${disciplina.nomeDisciplina}">Nome</td>
+                            <td th:text="${disciplina.curso != null ? disciplina.curso.nomeCurso : '-'}">Curso</td>
+                            <td th:text="${disciplina.professor != null ? disciplina.professor.nomeProfessor : '-'}">Professor</td>
+                            <td class="num" th:text="${disciplina.cargaHorariaDisciplina} + ' h'">80 h</td>
+                            <td class="actions">
+                                <div class="actions-group">
+                                    <a class="btn btn-ghost btn-sm" th:href="@{/disciplina/editar/{id}(id=${disciplina.idDisciplina})}">Editar</a>
+                                    <form th:action="@{/disciplina/deletar/{id}(id=${disciplina.idDisciplina})}" method="post"
+                                          th:attr="data-confirm='Excluir a disciplina ' + ${disciplina.nomeDisciplina} + '?'">
+                                        <button type="submit" class="btn btn-ghost-danger btn-sm">Excluir</button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                        </tbody>
+                    </table>
+                </div>
 
-        <div class="text-center mt-3">
-            <a href="/" class="btn btn-secondary">Voltar</a>
+                <div class="empty-state" th:if="${#lists.isEmpty(disciplinas)}">
+                    <strong>Nenhuma disciplina cadastrada</strong>
+                    Para criar uma disciplina é preciso ter ao menos um curso e um professor.
+                    <div><a class="btn btn-primary" th:href="@{/disciplina/formulario}">Nova disciplina</a></div>
+                </div>
+            </section>
         </div>
-    </div>
+    </main>
+</div>
 </body>
 </html>

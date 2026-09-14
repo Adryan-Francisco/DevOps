@@ -7,11 +7,16 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PedidoRepository extends JpaRepository<Pedido, Integer> {
-    @Override
+
     @EntityGraph(attributePaths = {"aluno", "itens", "itens.produto"})
-    List<Pedido> findAll();
+    List<Pedido> findAllByOrderByIdPedidoDesc();
 
     @Override
     @EntityGraph(attributePaths = {"aluno", "itens", "itens.produto"})
     Optional<Pedido> findById(Integer id);
+
+    @EntityGraph(attributePaths = {"aluno"})
+    List<Pedido> findTop5ByOrderByIdPedidoDesc();
+
+    boolean existsByAlunoIdAluno(Integer idAluno);
 }

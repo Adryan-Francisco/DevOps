@@ -1,5 +1,6 @@
 package br.com.devops.devops.controller;
 
+import br.com.devops.devops.exception.RegraNegocioException;
 import br.com.devops.devops.service.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,43 +22,51 @@ public class ItemDoPedidoController {
     }
 
     @GetMapping("/listar/{pedidoId}")
-    public String listar(@PathVariable Integer pedidoId, Model model) {
-        model.addAttribute("pedido", pedidoService.buscarPorId(pedidoId)
-                .orElseThrow(() -> new IllegalArgumentException("Pedido não encontrado")));
-        model.addAttribute("itens", itemService.listarPorPedido(pedidoId));
-        model.addAttribute("produtos", produtoService.listarTodos());
-        return "itemPedido/listarItens";
+    public String listar(@PathVariable Integer pedidoId, Model model, RedirectAttributes redirectAttributes) {
+        return pedidoService.buscarPorId(pedidoId).map(pedido -> {
+            model.addAttribute("pedido", pedido);
+            model.addAttribute("produtos", produtoService.listarTodos());
+            return "itemPedido/listarItens";
+        }).orElseGet(() -> {
+            redirectAttributes.addFlashAttribute("erro", "Pedido não encontrado.");
+            return "redirect:/pedido/listar";
+        });
     }
 
     @PostMapping("/salvar")
-    public String salvar(@RequestParam Integer pedidoId, @RequestParam Integer produtoId,
-                         @RequestParam Integer quantidade, RedirectAttributes redirectAttributes) {
-        itemService.salvar(pedidoId, produtoId, quantidade);
-        redirectAttributes.addFlashAttribute("mensagem", "Item adicionado com sucesso!");
+    public String salvar(@RequestParam Integer pedidoId, @RequestParam(required = false) Integer produtoId,
+                         @RequestParam(required = false) Integer quantidade, RedirectAttributes redirectAttributes) {
+        try {
+            itemService.adicionar(pedidoId, produtoId, quantidade);
+            redirectAttributes.addFlashAttribute("mensagem", "Item adicionado ao pedido.");
+        } catch (RegraNegocioException ex) {
+            redirectAttributes.addFlashAttribute("erro", ex.getMessage());
+        }
         return "redirect:/item-pedido/listar/" + pedidoId;
     }
 
-    @GetMapping("/editar/{id}")
-    public String editar(@PathVariable Integer id, Model model) {
-        var item = itemService.buscarPorId(id);
-        model.addAttribute("item", item);
-        model.addAttribute("produtos", produtoService.listarTodos());
-        return "itemPedido/formularioItem";
-    }
-
     @PostMapping("/atualizar/{id}")
-    public String atualizar(@PathVariable Integer id, @RequestParam Integer produtoId,
-                            @RequestParam Integer quantidade, RedirectAttributes redirectAttributes) {
-        var item = itemService.atualizar(id, produtoId, quantidade);
-        redirectAttributes.addFlashAttribute("mensagem", "Item atualizado com sucesso!");
-        return "redirect:/item-pedido/listar/" + item.getPedido().getIdPedido();
+    public String atualizar(@PathVariable Integer id, @RequestParam Integer pedidoId,
+                            @RequestParam(required = false) Integer quantidade,
+                            RedirectAttributes redirectAttributes) {
+        try {
+            itemService.atualizarQuantidade(id, quantidade);
+            redirectAttributes.addFlashAttribute("mensagem", "Quantidade atualizada.");
+        } catch (RegraNegocioException ex) {
+            redirectAttributes.addFlashAttribute("erro", ex.getMessage());
+        }
+        return "redirect:/item-pedido/listar/" + pedidoId;
     }
 
-    @GetMapping("/deletar/{id}/{pedidoId}")
-    public String deletar(@PathVariable Integer id, @PathVariable Integer pedidoId,
+    @PostMapping("/deletar/{id}")
+    public String deletar(@PathVariable Integer id, @RequestParam Integer pedidoId,
                           RedirectAttributes redirectAttributes) {
-        itemService.deletar(id);
-        redirectAttributes.addFlashAttribute("mensagem", "Item removido com sucesso!");
+        try {
+            itemService.remover(id);
+            redirectAttributes.addFlashAttribute("mensagem", "Item removido do pedido.");
+        } catch (RegraNegocioException ex) {
+            redirectAttributes.addFlashAttribute("erro", ex.getMessage());
+        }
         return "redirect:/item-pedido/listar/" + pedidoId;
     }
 }

@@ -1,77 +1,76 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Produtos</title>
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
-
+<head th:replace="~{fragments/layout :: head('Produtos')}"></head>
 <body>
-    <nav>
-        <div class="nav-container">
-            <div class="logo">Sistema DevOps</div>
-            <ul class="nav-links">
-                <li><a href="/home">Início</a></li>
-                <li><a href="/produto/listar">Produtos</a></li>
-                <li><a href="/pedido/listar">Pedidos</a></li>
-            </ul>
-        </div>
-    </nav>
-    <div class="page-header">
-        <h1>Produtos</h1>
-        <p>Gerencie o catálogo e o estoque</p>
-    </div>
-    <div class="container">
-        <div class="alerta" th:if="${mensagem}" th:text="${mensagem}"></div>
-        <div class="alerta" th:if="${erro}" th:text="${erro}"></div>
-        <div class="table-container">
-            <div class="table-header">
-                <h2>Lista de Produtos</h2><a class="btn btn-primary" href="/produto/formulario">Novo Produto</a>
-            </div>
-            <div style="overflow-x:auto">
-                <table class="tabela">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Foto</th>
-                            <th>Nome</th>
-                            <th>Descrição</th>
-                            <th>Preço</th>
-                            <th>Estoque</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="produto : ${produtos}">
-                            <td th:text="${produto.idProduto}"></td>
-                            <td>
-                                <img th:if="${produto.foto != null}" class="produto-foto"
-                                    th:src="@{/produto/foto/{id}(id=${produto.idProduto})}"
-                                    th:alt="${'Foto de ' + produto.nomeProduto}">
-                                <span th:unless="${produto.foto != null}">Sem foto</span>
-                            </td>
-                            <td th:text="${produto.nomeProduto}"></td>
-                            <td th:text="${produto.descricaoProduto}"></td>
-                            <td th:text="${#numbers.formatCurrency(produto.precoProduto)}"></td>
-                            <td th:text="${produto.quantidadeEstoque}"></td>
-                            <td>
-                                <div class="acoes"><a class="btn btn-small btn-info"
-                                        th:href="@{/produto/editar/{id}(id=${produto.idProduto})}">Editar</a><a
-                                        class="btn btn-small btn-danger"
-                                        th:href="@{/produto/deletar/{id}(id=${produto.idProduto})}"
-                                        onclick="return confirm('Tem certeza que deseja deletar?')">Deletar</a></div>
-                            </td>
-                        </tr>
-                        <tr th:if="${#lists.isEmpty(produtos)}">
-                            <td colspan="7">Nenhum produto cadastrado.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</body>
+<div class="app">
+    <aside th:replace="~{fragments/layout :: sidebar('produtos')}"></aside>
 
+    <main class="main">
+        <div class="content">
+            <div class="page-head">
+                <div>
+                    <h1>Produtos</h1>
+                    <p>Gerencie o catálogo e o estoque da loja.</p>
+                </div>
+                <a class="btn btn-primary" th:href="@{/produto/formulario}">Novo produto</a>
+            </div>
+
+            <th:block th:replace="~{fragments/layout :: alertas}"></th:block>
+
+            <section class="card">
+                <div class="table-wrap" th:unless="${#lists.isEmpty(produtos)}">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th class="num">Preço</th>
+                            <th class="num">Estoque</th>
+                            <th class="actions">Ações</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="produto : ${produtos}">
+                            <td>
+                                <div class="product-cell">
+                                    <img th:if="${produto.foto != null}" class="thumb"
+                                         th:src="@{/produto/foto/{id}(id=${produto.idProduto})}"
+                                         th:alt="${'Foto de ' + produto.nomeProduto}">
+                                    <span th:unless="${produto.foto != null}" class="thumb-empty">Sem foto</span>
+                                    <div>
+                                        <div class="cell-main" th:text="${produto.nomeProduto}">Nome</div>
+                                        <div class="cell-sub cell-truncate" th:text="${produto.descricaoProduto}"
+                                             th:title="${produto.descricaoProduto}">Descrição</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="num" th:text="${#numbers.formatCurrency(produto.precoProduto)}">R$ 0,00</td>
+                            <td class="num">
+                                <span class="badge"
+                                      th:classappend="${produto.quantidadeEstoque == 0} ? 'badge-danger' : (${produto.quantidadeEstoque <= 5} ? 'badge-warning' : 'badge-success')"
+                                      th:text="${produto.quantidadeEstoque == 0 ? 'Esgotado' : produto.quantidadeEstoque + ' un.'}">10 un.</span>
+                            </td>
+                            <td class="actions">
+                                <div class="actions-group">
+                                    <a class="btn btn-ghost btn-sm" th:href="@{/produto/editar/{id}(id=${produto.idProduto})}">Editar</a>
+                                    <form th:action="@{/produto/deletar/{id}(id=${produto.idProduto})}" method="post"
+                                          th:attr="data-confirm='Excluir o produto ' + ${produto.nomeProduto} + '?'">
+                                        <button type="submit" class="btn btn-ghost-danger btn-sm">Excluir</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="empty-state" th:if="${#lists.isEmpty(produtos)}">
+                    <strong>Nenhum produto cadastrado</strong>
+                    Cadastre produtos para poder adicioná-los aos pedidos.
+                    <div><a class="btn btn-primary" th:href="@{/produto/formulario}">Novo produto</a></div>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
+</body>
 </html>

@@ -28,4 +28,8 @@ public class ItemDoPedido {
 
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal subtotal;
+
+    public void atualizarSubtotal() {
+        subtotal = precoUnitario.multiply(BigDecimal.valueOf(quantidade));
+    }
 }

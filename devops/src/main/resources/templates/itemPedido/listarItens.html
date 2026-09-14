@@ -1,96 +1,146 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Itens do Pedido</title>
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
-
+<head th:replace="~{fragments/layout :: head('Pedido #' + ${pedido.idPedido})}"></head>
 <body>
-    <nav>
-        <div class="nav-container">
-            <div class="logo">Sistema DevOps</div>
-            <ul class="nav-links">
-                <li><a href="/home">Início</a></li>
-                <li><a href="/produto/listar">Produtos</a></li>
-                <li><a href="/pedido/listar">Pedidos</a></li>
-            </ul>
-        </div>
-    </nav>
-    <div class="page-header">
-        <h1 th:text="${'Itens do Pedido #' + pedido.idPedido}"></h1>
-        <p
-            th:text="${pedido.aluno != null ? 'Aluno: ' + pedido.aluno.nomeAluno + ' - RA: ' + pedido.aluno.raAluno : 'Cliente: ' + pedido.nomeCliente}">
-        </p>
-    </div>
-    <div class="container">
-        <div class="alerta" th:if="${mensagem}" th:text="${mensagem}"></div>
-        <div class="form-container">
-            <form action="/item-pedido/salvar" method="post"><input type="hidden" name="pedidoId"
-                    th:value="${pedido.idPedido}">
-                <h2 class="form-title">Adicionar Item</h2>
-                <div class="form-group"><label for="produtoId">Produto:</label><select id="produtoId" name="produtoId"
-                        required>
-                        <option value="">Selecione</option>
-                        <option th:each="produto : ${produtos}" th:value="${produto.idProduto}"
-                            th:text="${produto.nomeProduto + ' - R$ ' + #numbers.formatDecimal(produto.precoProduto,1,2)}">
-                        </option>
-                    </select></div>
-                <div class="form-group"><label for="quantidade">Quantidade:</label><input id="quantidade"
-                        name="quantidade" type="number" min="1" value="1" required></div>
-                <div class="form-actions"><button class="btn btn-success" type="submit">Adicionar item</button></div>
-            </form>
-        </div>
-        <div class="table-container">
-            <div class="table-header">
-                <h2>Itens cadastrados</h2><strong
-                    th:text="${'Total: ' + #numbers.formatCurrency(pedido.valorTotal)}"></strong>
+<div class="app">
+    <aside th:replace="~{fragments/layout :: sidebar('pedidos')}"></aside>
+
+    <main class="main">
+        <div class="content" th:with="editavel=${pedido.status.permiteAlterarItens()}">
+            <div class="page-head">
+                <div>
+                    <div class="breadcrumb"><a th:href="@{/pedido/listar}">Pedidos</a><span>/</span></div>
+                    <h1 th:text="'Pedido #' + ${pedido.idPedido}">Pedido #1</h1>
+                    <p>Adicione os produtos e ajuste as quantidades. O estoque é atualizado automaticamente.</p>
+                </div>
+                <div class="actions-group">
+                    <a class="btn btn-secondary" th:href="@{/pedido/editar/{id}(id=${pedido.idPedido})}">Editar dados</a>
+                    <a class="btn btn-primary" th:href="@{/pedido/listar}">Concluir</a>
+                </div>
             </div>
-            <div style="overflow-x:auto">
-                <table class="tabela">
-                    <thead>
+
+            <th:block th:replace="~{fragments/layout :: alertas}"></th:block>
+
+            <section class="card">
+                <div class="card-body">
+                    <dl class="summary">
+                        <div>
+                            <dt>Aluno</dt>
+                            <dd th:text="${pedido.aluno != null ? pedido.aluno.nomeAluno : pedido.nomeCliente}">Aluno</dd>
+                        </div>
+                        <div>
+                            <dt>RA</dt>
+                            <dd th:text="${pedido.aluno != null ? pedido.aluno.raAluno : '-'}">0000</dd>
+                        </div>
+                        <div>
+                            <dt>Data</dt>
+                            <dd th:text="${#temporals.format(pedido.dataPedido, 'dd/MM/yyyy')}">01/01/2026</dd>
+                        </div>
+                        <div>
+                            <dt>Status</dt>
+                            <dd><span th:replace="~{fragments/layout :: statusPedido(${pedido.status})}"></span></dd>
+                        </div>
+                        <div>
+                            <dt>Total</dt>
+                            <dd class="total-value" th:text="${#numbers.formatCurrency(pedido.valorTotal)}">R$ 0,00</dd>
+                        </div>
+                    </dl>
+                </div>
+            </section>
+
+            <section class="card" th:if="${editavel}">
+                <div class="card-header">
+                    <h2>Adicionar produto</h2>
+                </div>
+                <div class="card-body">
+                    <form class="inline-form" th:action="@{/item-pedido/salvar}" method="post">
+                        <input type="hidden" name="pedidoId" th:value="${pedido.idPedido}">
+                        <div class="form-group">
+                            <label for="produtoId">Produto</label>
+                            <select class="form-control" id="produtoId" name="produtoId" required>
+                                <option value="">Selecione um produto</option>
+                                <option th:each="produto : ${produtos}" th:value="${produto.idProduto}"
+                                        th:disabled="${produto.quantidadeEstoque == 0}"
+                                        th:text="${produto.nomeProduto + ' · ' + #numbers.formatCurrency(produto.precoProduto) + ' · ' + (produto.quantidadeEstoque == 0 ? 'esgotado' : produto.quantidadeEstoque + ' em estoque')}">
+                                    Produto
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group narrow">
+                            <label for="quantidade">Quantidade</label>
+                            <input class="form-control" id="quantidade" name="quantidade" type="number" min="1" value="1" required>
+                        </div>
+                        <button class="btn btn-primary" type="submit">Adicionar</button>
+                    </form>
+                    <small class="form-hint" th:if="${#lists.isEmpty(produtos)}">
+                        Nenhum produto cadastrado. <a th:href="@{/produto/formulario}">Cadastrar produto</a>
+                    </small>
+                </div>
+            </section>
+
+            <div class="alert alert-error" th:unless="${editavel}">
+                <span th:text="'Este pedido está ' + ${#strings.toLowerCase(pedido.status.descricao)} + ' e seus itens não podem ser alterados.'">
+                    Pedido bloqueado.</span>
+            </div>
+
+            <section class="card">
+                <div class="card-header">
+                    <h2>Itens do pedido</h2>
+                    <span class="text-muted" th:text="${pedido.quantidadeItens} + ' unidade(s)'">0 unidades</span>
+                </div>
+
+                <div class="table-wrap" th:unless="${#lists.isEmpty(pedido.itens)}">
+                    <table class="table">
+                        <thead>
                         <tr>
-                            <th>ID</th>
                             <th>Produto</th>
                             <th>Quantidade</th>
-                            <th>Preço unitário</th>
-                            <th>Subtotal</th>
-                            <th>Ações</th>
+                            <th class="num">Preço unitário</th>
+                            <th class="num">Subtotal</th>
+                            <th class="actions" th:if="${editavel}">Ações</th>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="item : ${itens}">
-                            <td th:text="${item.idItemDoPedido}"></td>
-                            <td th:text="${item.produto.nomeProduto}"></td>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item : ${pedido.itens}">
+                            <td class="cell-main" th:text="${item.produto.nomeProduto}">Produto</td>
                             <td>
-                                <form class="quantidade-form"
-                                    th:action="@{/item-pedido/atualizar/{id}(id=${item.idItemDoPedido})}"
-                                    method="post">
-                                    <input type="hidden" name="produtoId" th:value="${item.produto.idProduto}">
-                                    <input class="quantidade-input" name="quantidade" type="number" min="1"
-                                        th:value="${item.quantidade}" required>
-                                    <button class="btn btn-small btn-info" type="submit">Atualizar</button>
+                                <form class="qty-form" th:if="${editavel}" method="post"
+                                      th:action="@{/item-pedido/atualizar/{id}(id=${item.idItemDoPedido})}">
+                                    <input type="hidden" name="pedidoId" th:value="${pedido.idPedido}">
+                                    <input class="form-control" name="quantidade" type="number" min="1"
+                                           th:value="${item.quantidade}" th:attr="aria-label='Quantidade de ' + ${item.produto.nomeProduto}" required>
+                                    <button class="btn btn-ghost btn-sm" type="submit">Atualizar</button>
+                                </form>
+                                <span th:unless="${editavel}" th:text="${item.quantidade}">1</span>
+                            </td>
+                            <td class="num" th:text="${#numbers.formatCurrency(item.precoUnitario)}">R$ 0,00</td>
+                            <td class="num" th:text="${#numbers.formatCurrency(item.subtotal)}">R$ 0,00</td>
+                            <td class="actions" th:if="${editavel}">
+                                <form th:action="@{/item-pedido/deletar/{id}(id=${item.idItemDoPedido})}" method="post"
+                                      th:attr="data-confirm='Remover ' + ${item.produto.nomeProduto} + ' do pedido?'">
+                                    <input type="hidden" name="pedidoId" th:value="${pedido.idPedido}">
+                                    <button type="submit" class="btn btn-ghost-danger btn-sm">Remover</button>
                                 </form>
                             </td>
-                            <td th:text="${#numbers.formatCurrency(item.precoUnitario)}"></td>
-                            <td th:text="${#numbers.formatCurrency(item.subtotal)}"></td>
-                            <td>
-                                <div class="acoes"><a class="btn btn-small btn-danger"
-                                        th:href="@{/item-pedido/deletar/{id}/{pedidoId}(id=${item.idItemDoPedido},pedidoId=${pedido.idPedido})}"
-                                        onclick="return confirm('Remover este item?')">Remover</a></div>
-                            </td>
                         </tr>
-                        <tr th:if="${#lists.isEmpty(itens)}">
-                            <td colspan="6">Nenhum item adicionado.</td>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td colspan="3">Total</td>
+                            <td class="num" th:text="${#numbers.formatCurrency(pedido.valorTotal)}">R$ 0,00</td>
+                            <td th:if="${editavel}"></td>
                         </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="text-center mt-3"><a class="btn btn-secondary" href="/pedido/listar">Concluir</a></div>
-    </div>
-</body>
+                        </tfoot>
+                    </table>
+                </div>
 
+                <div class="empty-state" th:if="${#lists.isEmpty(pedido.itens)}">
+                    <strong>Nenhum item adicionado</strong>
+                    Use o formulário acima para incluir produtos neste pedido.
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
+</body>
 </html>

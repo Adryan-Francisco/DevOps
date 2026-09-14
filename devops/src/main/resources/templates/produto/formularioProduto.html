@@ -1,63 +1,75 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Produto</title>
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
-
+<head th:replace="~{fragments/layout :: head(${produto.idProduto == null ? 'Novo produto' : 'Editar produto'})}"></head>
 <body>
-    <nav>
-        <div class="nav-container">
-            <div class="logo">Sistema DevOps</div>
-            <ul class="nav-links">
-                <li><a href="/home">Início</a></li>
-                <li><a href="/produto/listar">Produtos</a></li>
-                <li><a href="/pedido/listar">Pedidos</a></li>
-            </ul>
-        </div>
-    </nav>
-    <div class="page-header">
-        <h1 th:text="${produto.idProduto == null ? 'Novo Produto' : 'Editar Produto'}"></h1>
-        <p>Preencha os dados do produto</p>
-    </div>
-    <div class="container">
-        <div class="alerta" th:if="${erro}" th:text="${erro}"></div>
-        <div class="form-container">
-            <form
-                th:action="${produto.idProduto == null} ? @{/produto/salvar} : @{/produto/atualizar/{id}(id=${produto.idProduto})}"
-                method="post" enctype="multipart/form-data">
-                <div class="form-group"><label for="nomeProduto">Nome:</label><input id="nomeProduto" name="nomeProduto"
-                        type="text" th:value="${produto.nomeProduto}" maxlength="100" required></div>
-                <div class="form-group"><label for="descricaoProduto">Descrição:</label><textarea id="descricaoProduto"
-                        name="descricaoProduto" maxlength="255" required
-                        th:text="${produto.descricaoProduto}"></textarea></div>
-                <div class="form-group"><label for="precoProduto">Preço (R$):</label><input id="precoProduto"
-                        name="precoProduto" type="number" min="0.01" step="0.01" th:value="${produto.precoProduto}"
-                        required></div>
-                <div class="form-group"><label for="quantidadeEstoque">Quantidade em estoque:</label><input
-                        id="quantidadeEstoque" name="quantidadeEstoque" type="number" min="0"
-                        th:value="${produto.quantidadeEstoque}" required></div>
-                <div class="form-group">
-                    <label for="fotoArquivo">Foto:</label>
-                    <input id="fotoArquivo" name="fotoArquivo" type="file"
-                        accept="image/jpeg,image/png,image/gif,image/webp">
-                    <small>Formatos permitidos: JPG, PNG, GIF ou WEBP. Tamanho máximo: 5 MB.</small>
-                    <div th:if="${produto.foto != null}" class="foto-atual">
-                        <span>Foto atual:</span>
-                        <img th:src="@{/produto/foto/{id}(id=${produto.idProduto})}"
-                            th:alt="${'Foto de ' + produto.nomeProduto}">
-                        <small th:text="${produto.tipoFoto}"></small>
+<div class="app">
+    <aside th:replace="~{fragments/layout :: sidebar('produtos')}"></aside>
+
+    <main class="main">
+        <div class="content">
+            <div class="page-head">
+                <div>
+                    <div class="breadcrumb"><a th:href="@{/produto/listar}">Produtos</a><span>/</span></div>
+                    <h1 th:text="${produto.idProduto == null ? 'Novo produto' : 'Editar produto'}">Novo produto</h1>
+                    <p>Campos marcados com * são obrigatórios.</p>
+                </div>
+            </div>
+
+            <th:block th:replace="~{fragments/layout :: alertas}"></th:block>
+
+            <form class="card form-card" th:object="${produto}" method="post" enctype="multipart/form-data" novalidate
+                  th:action="${produto.idProduto == null} ? @{/produto/salvar} : @{/produto/atualizar/{id}(id=${produto.idProduto})}">
+                <div class="card-body form-grid">
+                    <div class="form-group full">
+                        <label class="required" for="nomeProduto">Nome</label>
+                        <input class="form-control" type="text" th:field="*{nomeProduto}" th:errorclass="is-invalid"
+                               maxlength="100" placeholder="Ex: Caneca personalizada" required>
+                        <small class="field-error" th:errors="*{nomeProduto}"></small>
+                    </div>
+
+                    <div class="form-group full">
+                        <label class="required" for="descricaoProduto">Descrição</label>
+                        <textarea class="form-control" th:field="*{descricaoProduto}" th:errorclass="is-invalid"
+                                  maxlength="255" placeholder="Descreva o produto" required></textarea>
+                        <small class="field-error" th:errors="*{descricaoProduto}"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required" for="precoProduto">Preço (R$)</label>
+                        <input class="form-control" type="number" min="0.01" step="0.01" th:field="*{precoProduto}"
+                               th:errorclass="is-invalid" placeholder="0,00" required>
+                        <small class="field-error" th:errors="*{precoProduto}"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required" for="quantidadeEstoque">Quantidade em estoque</label>
+                        <input class="form-control" type="number" min="0" th:field="*{quantidadeEstoque}"
+                               th:errorclass="is-invalid" placeholder="0" required>
+                        <small class="field-error" th:errors="*{quantidadeEstoque}"></small>
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="fotoArquivo">Foto</label>
+                        <input class="form-control" id="fotoArquivo" name="fotoArquivo" type="file"
+                               accept="image/jpeg,image/png,image/gif,image/webp">
+                        <small class="form-hint">JPG, PNG, GIF ou WEBP com até 5 MB.
+                            <span th:if="${produto.foto != null}">Envie uma nova foto apenas se quiser substituir a atual.</span>
+                        </small>
+                        <div th:if="${produto.foto != null}" class="foto-atual">
+                            <img th:src="@{/produto/foto/{id}(id=${produto.idProduto})}"
+                                 th:alt="${'Foto de ' + produto.nomeProduto}">
+                            <span>Foto atual</span>
+                        </div>
                     </div>
                 </div>
-                <div class="form-actions"><button class="btn btn-success" type="submit"
-                        th:text="${produto.idProduto == null ? 'Salvar' : 'Atualizar'}"></button><a
-                        class="btn btn-secondary" href="/produto/listar">Cancelar</a></div>
+
+                <div class="card-footer">
+                    <a class="btn btn-secondary" th:href="@{/produto/listar}">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Salvar produto</button>
+                </div>
             </form>
         </div>
-    </div>
+    </main>
+</div>
 </body>
-
 </html>

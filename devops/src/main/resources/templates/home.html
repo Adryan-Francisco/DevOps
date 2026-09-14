@@ -1,65 +1,117 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema DevOps - Home</title>
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
+<head th:replace="~{fragments/layout :: head('Início')}"></head>
 <body>
-    <nav>
-        <div class="nav-container">
-            <div class="logo">Sistema DevOps</div>
-            <ul class="nav-links">
-                <li><a href="/devops">Início</a></li>
-                <li><a href="/aluno/listar">Alunos</a></li>
-                <li><a href="/usuario/listar">Usuários</a></li>
-                <li><a href="/curso/listar">Cursos</a></li>
-                <li><a href="/professor/listar">Professores</a></li>
-                <li><a href="/disciplina/listar">Disciplinas</a></li>
-                <li><a href="/produto/listar">Produtos</a></li>
-                <li><a href="/pedido/listar">Pedidos</a></li>
-            </ul>
+<div class="app">
+    <aside th:replace="~{fragments/layout :: sidebar('home')}"></aside>
+
+    <main class="main">
+        <div class="content">
+            <div class="page-head">
+                <div>
+                    <h1 th:text="${usuarioLogado != null ? 'Olá, ' + usuarioLogado.nomeUsuario : 'Bem-vindo'}">Olá</h1>
+                    <p>Resumo geral do sistema acadêmico e da loja.</p>
+                </div>
+                <div class="actions-group">
+                    <a class="btn btn-secondary" th:href="@{/aluno/formulario}">Novo aluno</a>
+                    <a class="btn btn-primary" th:href="@{/pedido/formulario}">Novo pedido</a>
+                </div>
+            </div>
+
+            <th:block th:replace="~{fragments/layout :: alertas}"></th:block>
+
+            <section class="stats">
+                <a class="stat" th:href="@{/aluno/listar}">
+                    <div class="stat-label">Alunos</div>
+                    <div class="stat-value" th:text="${totalAlunos}">0</div>
+                </a>
+                <a class="stat" th:href="@{/curso/listar}">
+                    <div class="stat-label">Cursos</div>
+                    <div class="stat-value" th:text="${totalCursos}">0</div>
+                </a>
+                <a class="stat" th:href="@{/professor/listar}">
+                    <div class="stat-label">Professores</div>
+                    <div class="stat-value" th:text="${totalProfessores}">0</div>
+                </a>
+                <a class="stat" th:href="@{/disciplina/listar}">
+                    <div class="stat-label">Disciplinas</div>
+                    <div class="stat-value" th:text="${totalDisciplinas}">0</div>
+                </a>
+                <a class="stat" th:href="@{/produto/listar}">
+                    <div class="stat-label">Produtos</div>
+                    <div class="stat-value" th:text="${totalProdutos}">0</div>
+                </a>
+                <a class="stat" th:href="@{/pedido/listar}">
+                    <div class="stat-label">Pedidos</div>
+                    <div class="stat-value" th:text="${totalPedidos}">0</div>
+                </a>
+            </section>
+
+            <div class="dashboard-grid">
+                <section class="card">
+                    <div class="card-header">
+                        <h2>Últimos pedidos</h2>
+                        <a class="btn btn-ghost btn-sm" th:href="@{/pedido/listar}">Ver todos</a>
+                    </div>
+                    <div class="table-wrap" th:unless="${#lists.isEmpty(ultimosPedidos)}">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Pedido</th>
+                                <th>Aluno</th>
+                                <th>Status</th>
+                                <th class="num">Total</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="pedido : ${ultimosPedidos}">
+                                <td>
+                                    <a class="cell-main" th:href="@{/item-pedido/listar/{id}(id=${pedido.idPedido})}"
+                                       th:text="'#' + ${pedido.idPedido}">#1</a>
+                                    <div class="cell-sub" th:text="${#temporals.format(pedido.dataPedido, 'dd/MM/yyyy')}">01/01/2026</div>
+                                </td>
+                                <td th:text="${pedido.aluno != null ? pedido.aluno.nomeAluno : pedido.nomeCliente}">Aluno</td>
+                                <td><span th:replace="~{fragments/layout :: statusPedido(${pedido.status})}"></span></td>
+                                <td class="num" th:text="${#numbers.formatCurrency(pedido.valorTotal)}">R$ 0,00</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="empty-state" th:if="${#lists.isEmpty(ultimosPedidos)}">
+                        <strong>Nenhum pedido ainda</strong>
+                        Os pedidos cadastrados aparecerão aqui.
+                    </div>
+                </section>
+
+                <section class="card">
+                    <div class="card-header">
+                        <h2>Estoque baixo</h2>
+                        <a class="btn btn-ghost btn-sm" th:href="@{/produto/listar}">Produtos</a>
+                    </div>
+                    <div class="table-wrap" th:unless="${#lists.isEmpty(estoqueBaixo)}">
+                        <table class="table">
+                            <tbody>
+                            <tr th:each="produto : ${estoqueBaixo}">
+                                <td>
+                                    <a class="cell-main" th:href="@{/produto/editar/{id}(id=${produto.idProduto})}"
+                                       th:text="${produto.nomeProduto}">Produto</a>
+                                </td>
+                                <td class="num">
+                                    <span class="badge" th:classappend="${produto.quantidadeEstoque == 0} ? 'badge-danger' : 'badge-warning'"
+                                          th:text="${produto.quantidadeEstoque == 0 ? 'Esgotado' : produto.quantidadeEstoque + ' un.'}">3 un.</span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="empty-state" th:if="${#lists.isEmpty(estoqueBaixo)}">
+                        <strong>Tudo certo</strong>
+                        Nenhum produto com 5 unidades ou menos.
+                    </div>
+                </section>
+            </div>
         </div>
-    </nav>
-
-    <div class="page-header">
-        <h1>Bem-vindo ao Sistema DevOps</h1>
-        <p>Gerenciamento de Alunos, Cursos, Professores, Disciplinas e Usuários</p>
-    </div>
-
-    <div class="container">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; width: 100%;">
-            <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07); text-align: center;">
-                <h2 style="color: var(--primary-color); margin-bottom: 1rem; font-size: 1.5rem;">Alunos</h2>
-                <p style="color: var(--text-light); margin-bottom: 1.5rem;">Gerencie os registros de alunos</p>
-                <a href="/aluno/listar" class="btn btn-primary">Abrir Alunos</a>
-            </div>
-
-            <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07); text-align: center;">
-                <h2 style="color: var(--info-color); margin-bottom: 1rem; font-size: 1.5rem;">Cursos</h2>
-                <p style="color: var(--text-light); margin-bottom: 1.5rem;">Gerencie os cursos disponíveis</p>
-                <a href="/curso/listar" class="btn btn-info">Abrir Cursos</a>
-            </div>
-
-            <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07); text-align: center;">
-                <h2 style="color: var(--success-color); margin-bottom: 1rem; font-size: 1.5rem;">Professores</h2>
-                <p style="color: var(--text-light); margin-bottom: 1.5rem;">Gerencie os dados dos professores</p>
-                <a href="/professor/listar" class="btn btn-success">Abrir Professores</a>
-            </div>
-
-            <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07); text-align: center;">
-                <h2 style="color: var(--warning-color); margin-bottom: 1rem; font-size: 1.5rem;">Disciplinas</h2>
-                <p style="color: var(--text-light); margin-bottom: 1.5rem;">Gerencie as disciplinas oferecidas</p>
-                <a href="/disciplina/listar" class="btn btn-warning" style="background: var(--warning-color);">Abrir Disciplinas</a>
-            </div>
-            <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07); text-align: center;"><h2 style="color: var(--primary-color); margin-bottom: 1rem; font-size: 1.5rem;">Produtos</h2><p style="color: var(--text-light); margin-bottom: 1.5rem;">Gerencie o catálogo e o estoque</p><a href="/produto/listar" class="btn btn-primary">Abrir Produtos</a></div>
-            <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07); text-align: center;"><h2 style="color: var(--success-color); margin-bottom: 1rem; font-size: 1.5rem;">Pedidos</h2><p style="color: var(--text-light); margin-bottom: 1.5rem;">Cadastre e acompanhe pedidos</p><a href="/pedido/listar" class="btn btn-success">Abrir Pedidos</a></div>
-        </div>
-
-        <div class="text-center mt-3">
-            <a href="/usuario/listar" class="btn btn-secondary">Ir para Usuários</a>
-        </div>
-    </div>
+    </main>
+</div>
 </body>
 </html>
